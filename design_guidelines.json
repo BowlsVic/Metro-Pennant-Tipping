@@ -1,0 +1,159 @@
+{
+  "app_name": "TipsterPro",
+  "personality": "7 Dark-First Utility DARK",
+  "personality_one_liner": "A sharp, tactical command center for sports tipping, emphasizing high-contrast states, immediate hierarchy, and OLED-friendly athletic energy.",
+  "color": {
+    "surface": "#0C0E12",
+    "onSurface": "#F2F4F7",
+    "surfaceSecondary": "#161920",
+    "onSurfaceSecondary": "#D0D5DD",
+    "surfaceTertiary": "#1F232B",
+    "onSurfaceTertiary": "#98A2B3",
+    "surfaceInverse": "#FFFFFF",
+    "onSurfaceInverse": "#000000",
+    "brand": "#FF6B00",
+    "brandPrimary": "#FF6B00",
+    "onBrandPrimary": "#1A0B00",
+    "brandSecondary": "#E05A00",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#3D1C00",
+    "onBrandTertiary": "#FFB885",
+    "success": "#12B76A",
+    "onSuccess": "#002914",
+    "warning": "#F79009",
+    "onWarning": "#452300",
+    "error": "#F04438",
+    "onError": "#4A0F09",
+    "border": "#272A30",
+    "borderStrong": "#4A4D55",
+    "divider": "#1E2128",
+    "muted": "#667085"
+  },
+  "typography": {
+    "displayFontFamily": "Barlow Condensed",
+    "textFontFamily": "DM Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Use compact, tactical spacing for high information density. Maintain clear thumb zones for the sticky bottom CTA.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 0,
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Use heavy-tinted blur for the bottom tab bar and sticky round selector row over scrolling matches.",
+      "Ensure tint opacity is >=75% of surface background for readability."
+    ],
+    "dont's": [
+      "No glass on standard match cards or dense leaderboard rows. Keep it tactical."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Auth",
+      "purpose": "Login or register to access the competition.",
+      "states": {
+        "loading": "Spinner over login CTA.",
+        "empty": "N/A",
+        "error": "Red banner with retry icon."
+      },
+      "layout": "Hero image at the top with a vertical gradient scrim fading to surface color. Single column form below."
+    },
+    {
+      "name": "Tipping (Home)",
+      "purpose": "Pick winners per match across 14 rounds + finals.",
+      "states": {
+        "loading": "Skeleton match cards.",
+        "empty": "Illustration: Whistle or scoreboard with 'Round not configured yet'.",
+        "error": "Error loading matches message with retry button."
+      },
+      "layout": "Sticky glass header containing horizontal scrollable 'Round' chips (R1...R14, Finals). Vertical list of match cards. Each card splits 50/50 with Team A vs Team B; tapping a side highlights it with brandPrimary border and surfaceTertiary fill. Fixed 'Submit Tips' CTA at the bottom."
+    },
+    {
+      "name": "Leaderboard",
+      "purpose": "View current standings and tipping accuracy.",
+      "states": {
+        "loading": "Skeleton rows for users.",
+        "empty": "No tips placed yet message.",
+        "error": "Failed to load leaderboard."
+      },
+      "layout": "Top 3 users get specialized, larger cards at the top (podium style) with brandTertiary accents. Ranks 4+ use compact list rows highlighting Rank, Name, Points, and Streak. Highly glanceable numbers."
+    },
+    {
+      "name": "Teams",
+      "purpose": "List of the 8 teams with colours and stats.",
+      "states": {
+        "loading": "Skeleton grid.",
+        "empty": "No teams added.",
+        "error": "Failed to load teams."
+      },
+      "layout": "2-column grid of team cards. Each card displays the team logo (initials fallback), name, and is tinted with the team's primary color."
+    },
+    {
+      "name": "Admin Dashboard",
+      "purpose": "Manage fixtures, input results, and append finals.",
+      "states": {
+        "loading": "Skeleton forms.",
+        "empty": "N/A",
+        "error": "Error updating fixtures."
+      },
+      "layout": "Utility-heavy single-column list. Segmented controls to toggle between 'Manage Teams', 'Fixtures', and 'Results'."
+    }
+  ],
+  "images": {
+    "auth_hero": {
+      "url": "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODh8MHwxfHNlYXJjaHwxfHxjaW5lbWF0aWMlMjBzcG9ydHMlMjBzdGFkaXVtJTIwbGlnaHRzJTIwYmFja2dyb3VuZCUyMGRhcmt8ZW58MHx8fHwxNzkyNTQ4MDIwfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Dark cinematic sports stadium lights"
+    },
+    "empty_state_illustration": {
+      "url": "https://images.pexels.com/photos/13204813/pexels-photo-13204813.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Football resting on ground representing empty state"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the '7 Dark-First Utility DARK' guidelines. No blue or purple unless explicitly used as a team's color.",
+    "Implement the gradient scrim pattern (transparent -> 20% surfaceInverse -> >=70% surfaceInverse) on the auth hero image before placing text.",
+    "Ensure 'Submit Tips' CTA is fixed at the bottom with safe area padding, outside the scrolling match list. Do not let it hide.",
+    "For the 8 generic teams, if real logos are not available, use the initials fallback inside a tinted circular view, but map them to distinct non-neon colors (e.g., Red, Orange, Green, Gold).",
+    "Use 'Barlow Condensed' for metrics, ranks, scores, and round headers. Keep it OLED-friendly.",
+    "Haptics: Add subtle haptic feedback (impactLight) when a user selects a team on the match card, and when switching rounds."
+  ],
+  "haptics": {
+    "team_selection": "impactLight",
+    "round_switch": "selection",
+    "submit_tips": "notificationSuccess"
+  }
+}
