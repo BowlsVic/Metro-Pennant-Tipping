@@ -61,6 +61,11 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - app.json: ios.usesAppleSignIn + expo-apple-authentication plugin
 - Tested: 10/10 backend + login UI flows (real Google/Apple logins need manual check)
 
+## Iteration 9 (2026-06)
+- Web hosting (Option 2: external host + Emergent backend): verified `npx expo export --platform web` builds (single-page output to dist), EXPO_PUBLIC_BACKEND_URL baked in at build time, CORS accepts external origins
+- Added frontend/vercel.json and frontend/netlify.toml (build command, dist output, SPA rewrites); /app/DEPLOY_WEB.md step-by-step guide
+- app.json name set to "Tip Masters" (browser tab title / app display name; slug and bundle ids unchanged)
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

@@ -1,0 +1,12 @@
+[build]
+  command = "npx expo export --platform web"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Single-page app: every route (e.g. /admin/round/3) is served by index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
