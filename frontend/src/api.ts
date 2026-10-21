@@ -10,7 +10,7 @@ export type Team = {
 
 export const teamLogoUrl = (t: Team) => `${BASE}/api/teams/${t.id}/logo?v=${t.logo_v ?? 0}`;
 
-export type SyncStatus = { last_sync?: string; updated?: number; completed_found?: number; error?: string | null; last_attempt?: string };
+
 export type User = { id: string; email: string; name: string; role: "user" | "admin" };
 export type RoundSummary = {
   id: string; number: number; name: string; is_final: boolean; locked: boolean;
@@ -32,7 +32,12 @@ export type AllTips = {
 export type RoundDetail = RoundSummary & {
   matches: MatchItem[]; my_correct: number; my_bonus: number; my_points: number;
 };
-export type LadderRow = { user_id: string; name: string; correct: number; bonus: number; points: number; tips: number; rank: number };
+export type LadderRow = { user_id: string; name: string; correct: number; bonus: number; points: number; tips: number; rank: number; round_wins: number };
+export type RoundWinner = { number: number; name: string; points: number; winners: { user_id: string; name: string }[] };
+export type SyncStatus = {
+  last_sync?: string; updated?: number; completed_found?: number; finals_added?: number; kickoffs_updated?: number;
+  error?: string | null; last_attempt?: string;
+};
 
 export async function api<T>(path: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
   const token = await storage.secureGet(TOKEN_KEY, null);

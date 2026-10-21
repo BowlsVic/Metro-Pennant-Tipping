@@ -526,33 +526,68 @@ async def delete_match(match_id: str, _: User = Depends(admin_user)):
 
 
 # ---------------- Leaderboard ----------------
-@api_router.get("/leaderboard")
-async def leaderboard(_: User = Depends(current_user)):
+async def compute_standings():
+    """Season ladder rows plus the top scorer(s) of every completed round (ties share the win)."""
     matches = [Match.from_mongo(m) async for m in db.matches.find()]
     by_round = {}
     for m in matches:
         by_round.setdefault(m.round_number, []).append(m)
     complete_rounds = {rn: ms for rn, ms in by_round.items() if all(x.winner_team_id for x in ms)}
     winners = {m.id: m.winner_team_id for m in matches if m.winner_team_id}
+    round_names = {r["number"]: r["name"] async for r in db.rounds.find()}
     users = [User.from_mongo(u) async for u in db.users.find({"role": {"$ne": "admin"}})]
+    names = {u.id: u.name for u in users}
     tips_by_user = {}
     async for t in db.tips.find():
         tips_by_user.setdefault(t["user_id"], []).append(Tip.from_mongo(t))
-    rows = []
+    rows, round_pts = [], {}
     for u in users:
         tips = tips_by_user.get(u.id, [])
         correct_by_round = {}
         for t in tips:
             if winners.get(t.match_id) == t.team_id:
                 correct_by_round[t.round_number] = correct_by_round.get(t.round_number, 0) + 1
+        bonus = 0
+        for rn, ms in complete_rounds.items():
+            c = correct_by_round.get(rn, 0)
+            perfect = 1 if c == len(ms) else 0
+            bonus += perfect
+            round_pts.setdefault(rn, {})[u.id] = c + perfect
         correct = sum(correct_by_round.values())
-        bonus = sum(1 for rn, ms in complete_rounds.items() if correct_by_round.get(rn, 0) == len(ms))
         rows.append({"user_id": u.id, "name": u.name, "correct": correct, "bonus": bonus,
-                     "points": correct + bonus, "tips": len(tips)})
+                     "points": correct + bonus, "tips": len(tips), "round_wins": 0})
+    round_winners = []
+    for rn in sorted(complete_rounds):
+        pts = round_pts.get(rn, {})
+        best = max(pts.values(), default=0)
+        if best <= 0:
+            continue
+        ids = sorted((uid for uid, p in pts.items() if p == best), key=lambda x: names[x].lower())
+        round_winners.append({"number": rn, "name": round_names.get(rn, f"Round {rn}"), "points": best,
+                              "winners": [{"user_id": uid, "name": names[uid]} for uid in ids]})
+    wins = {}
+    for rw in round_winners:
+        for w in rw["winners"]:
+            wins[w["user_id"]] = wins.get(w["user_id"], 0) + 1
+    for r in rows:
+        r["round_wins"] = wins.get(r["user_id"], 0)
     rows.sort(key=lambda r: (-r["points"], -r["correct"], r["name"].lower()))
     for i, r in enumerate(rows):
         r["rank"] = i + 1 if i == 0 or r["points"] != rows[i - 1]["points"] or r["correct"] != rows[i - 1]["correct"] else rows[i - 1]["rank"]
+    return rows, round_winners
+
+
+@api_router.get("/leaderboard")
+async def leaderboard(_: User = Depends(current_user)):
+    rows, _w = await compute_standings()
     return rows
+
+
+@api_router.get("/round-winners")
+async def round_winners(_: User = Depends(current_user)):
+    """Completed rounds, latest first, with the player(s) who scored most that round."""
+    _rows, winners = await compute_standings()
+    return list(reversed(winners))
 
 
 # ---------------- Object storage (team logos) ----------------
@@ -655,12 +690,61 @@ async def fetch_competition(cid: str) -> dict:
         return r.json()
 
 
+async def sync_fixtures(comp: dict, data: dict, team_by_ext: dict) -> tuple:
+    """Adds newly announced finals matches (creating finals rounds by their Bowlslink label)
+    and keeps kick-off times of undecided matches in step with Bowlslink."""
+    added, moved = 0, 0
+    items = sorted([i for i in data.get("include", []) if i.get("type") == "match"],
+                   key=lambda m: (m.get("attributes") or {}).get("matchTimeUtc") or 0)
+    for inc in items:
+        a = inc.get("attributes") or {}
+        kick = datetime.fromtimestamp(a["matchTimeUtc"], timezone.utc).isoformat() if a.get("matchTimeUtc") else None
+        existing = Match.from_mongo(await db.matches.find_one({"ext_id": inc["id"]}))
+        if existing:
+            if kick and existing.kickoff != kick and not existing.winner_team_id:
+                await db.matches.update_one({"_id": oid(existing.id)}, {"$set": {"kickoff": kick}})
+                moved += 1
+            continue
+        is_final = a.get("isFinalsSeries") or (a.get("round") or 0) > REGULAR_ROUNDS
+        if not is_final or a.get("isBye") or a.get("isTBD") or a.get("competitorOneTBD") or a.get("competitorTwoTBD"):
+            continue
+        refs = inc.get("includes") or {}
+        home = team_by_ext.get((refs.get("competitorOne") or {}).get("id"))
+        away = team_by_ext.get((refs.get("competitorTwo") or {}).get("id"))
+        if not home or not away or home == away:
+            continue  # teams not decided yet; picked up on a later sync
+        label = (a.get("roundLabel") or f"Finals Round {a.get('round')}").strip()
+        rnd = await db.rounds.find_one({"is_final": True, "name": label})
+        if rnd:
+            num = rnd["number"]
+        else:
+            last = await db.rounds.find_one(sort=[("number", -1)])
+            num = (last["number"] if last else 0) + 1
+            await db.rounds.insert_one(Round(number=num, name=label, is_final=True).to_mongo())
+        order = await db.matches.count_documents({"round_number": num})
+        await db.matches.insert_one(Match(round_number=num, order=order, home_team_id=home, away_team_id=away,
+                                          kickoff=kick, group=comp.get("group"), ext_id=inc["id"]).to_mongo())
+        added += 1
+    return added, moved
+
+
+sync_lock = asyncio.Lock()
+
+
 async def sync_results() -> dict:
-    """Copies completed Bowlslink results onto our matches (matched by Bowlslink match id)."""
+    """Imports finals + kick-off changes, then copies completed Bowlslink results onto our matches."""
+    async with sync_lock:
+        return await _sync_results()
+
+
+async def _sync_results() -> dict:
     team_by_ext = {t["ext_id"]: str(t["_id"]) async for t in db.teams.find({"ext_id": {"$ne": None}})}
-    updated, completed = 0, 0
+    updated, completed, finals_added, kickoffs_updated = 0, 0, 0, 0
     for comp in FIXTURE["competitions"]:
         data = await fetch_competition(comp["id"])
+        added, moved = await sync_fixtures(comp, data, team_by_ext)
+        finals_added += added
+        kickoffs_updated += moved
         for inc in data.get("include", []):
             if inc.get("type") != "multiFormatResult":
                 continue
@@ -685,7 +769,8 @@ async def sync_results() -> dict:
                 await db.matches.update_one({"_id": oid(m.id)}, {"$set": {"winner_team_id": winner}})
                 updated += 1
     status = {"last_sync": datetime.now(timezone.utc).isoformat(), "updated": updated,
-              "completed_found": completed, "error": None}
+              "completed_found": completed, "finals_added": finals_added,
+              "kickoffs_updated": kickoffs_updated, "error": None}
     await db.meta.update_one({"_id": "sync"}, {"$set": status}, upsert=True)
     return status
 
@@ -694,8 +779,8 @@ async def sync_loop():
     while True:
         try:
             s = await sync_results()
-            if s["updated"]:
-                logger.info(f"Bowlslink sync updated {s['updated']} results")
+            if s["updated"] or s["finals_added"] or s["kickoffs_updated"]:
+                logger.info(f"Bowlslink sync: {s}")
         except Exception as e:
             logger.warning(f"Bowlslink sync failed: {e}")
             await db.meta.update_one({"_id": "sync"}, {"$set": {"error": str(e)[:200],

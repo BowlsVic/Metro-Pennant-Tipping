@@ -44,6 +44,12 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Division filter chips (All / Premier Division / Premier Reserve) on Tips screen
 - Tested: 16/16 new backend tests + UI flows. Live data untouched (0 tips, 0 results)
 
+## Iteration 6 (2026-06)
+- Finals import: Bowlslink sync now adds finals matches (isFinalsSeries or round > 14) once both teams are known, creating finals rounds named by Bowlslink roundLabel (Division matches first); also updates start times of undecided matches when Bowlslink changes them. Sync protected by a lock
+- Round winners: compute_standings() gives each completed round's top scorer(s) (ties shared); GET /api/round-winners; ladder shows "Round winners" strip (latest highlighted) and trophy badges with win counts
+- Verified via simulated Bowlslink payloads + test tips (all cleaned up)
+- Note: ladder contains ~28 leftover test accounts from earlier testing; awaiting user decision to delete
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

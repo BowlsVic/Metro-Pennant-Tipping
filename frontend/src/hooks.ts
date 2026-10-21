@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-import { AllTips, api, LadderRow, RoundDetail, RoundSummary, Team } from "@/src/api";
+import { AllTips, api, LadderRow, RoundDetail, RoundSummary, RoundWinner, Team } from "@/src/api";
 
 export function useTeams() {
   const q = useQuery({ queryKey: ["teams"], queryFn: () => api<Team[]>("/teams") });
@@ -16,6 +16,10 @@ export const useRound = (n: number | null) =>
   useQuery({ queryKey: ["round", n], queryFn: () => api<RoundDetail>(`/rounds/${n}`), enabled: n != null });
 
 export const useLadder = () => useQuery({ queryKey: ["ladder"], queryFn: () => api<LadderRow[]>("/leaderboard") });
+
+// Keyed under "ladder" so every ladder invalidation refreshes round winners too.
+export const useRoundWinners = () =>
+  useQuery({ queryKey: ["ladder", "round-winners"], queryFn: () => api<RoundWinner[]>("/round-winners") });
 
 export const useAllTips = (n: number) =>
   useQuery({ queryKey: ["all-tips", n], queryFn: () => api<AllTips>(`/rounds/${n}/all-tips`) });

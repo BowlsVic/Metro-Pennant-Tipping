@@ -21,7 +21,12 @@ export function BowlslinkCard() {
     setBusy("sync");
     try {
       const s = await api<SyncStatus>("/admin/sync-results", { method: "POST" });
-      toast(s.updated ? `${s.updated} result${s.updated === 1 ? "" : "s"} updated` : "Results are up to date");
+      const parts = [
+        s.updated ? `${s.updated} result${s.updated === 1 ? "" : "s"} updated` : "",
+        s.finals_added ? `${s.finals_added} finals match${s.finals_added === 1 ? "" : "es"} added` : "",
+        s.kickoffs_updated ? `${s.kickoffs_updated} start time${s.kickoffs_updated === 1 ? "" : "s"} changed` : "",
+      ].filter(Boolean);
+      toast(parts.length ? parts.join(" · ") : "Everything is up to date");
       ["sync-status", "rounds", "round", "ladder", "all-tips"].forEach((k) => qc.invalidateQueries({ queryKey: [k] }));
     } catch (e) {
       toast(e instanceof Error ? e.message : "Sync failed", "error");
@@ -51,7 +56,7 @@ export function BowlslinkCard() {
         <Text style={styles.title}>Bowlslink auto-sync</Text>
       </View>
       <Text testID="sync-status-text" style={styles.meta}>
-        Results are pulled automatically every 15 minutes.
+        Results, start-time changes and newly announced finals matches are pulled automatically every 15 minutes.
         {s?.last_sync ? `\nLast synced ${formatKickoff(s.last_sync)} · ${s.completed_found ?? 0} completed matches found` : ""}
       </Text>
       {s?.error ? <Text testID="sync-error-text" style={styles.error}>Last attempt failed: {s.error}</Text> : null}
