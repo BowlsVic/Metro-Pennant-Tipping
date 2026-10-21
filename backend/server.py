@@ -65,6 +65,8 @@ class User(BaseDocument):
     name: str
     role: str = "user"
     password_hash: str = ""
+    apple_sub: Optional[str] = None
+    picture: Optional[str] = None
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
@@ -128,6 +130,16 @@ class RegisterIn(BaseModel):
 class LoginIn(BaseModel):
     email: EmailStr
     password: str
+
+
+class GoogleSessionIn(BaseModel):
+    session_id: str = Field(min_length=1)
+
+
+class AppleIn(BaseModel):
+    identity_token: str = Field(min_length=1)
+    name: Optional[str] = None
+    email: Optional[str] = None
 
 
 class TipItem(BaseModel):
@@ -225,6 +237,7 @@ FIXTURE = json.loads((ROOT_DIR / "fixture.json").read_text())
 
 async def seed():
     await db.users.create_index("email", unique=True)
+    await db.users.create_index("apple_sub", unique=True, partialFilterExpression={"apple_sub": {"$type": "string"}})
     await db.tips.create_index([("user_id", 1), ("match_id", 1)], unique=True)
     await db.rounds.create_index("number", unique=True)
     email = os.environ['ADMIN_EMAIL'].lower()
@@ -284,6 +297,70 @@ async def login(body: LoginIn):
 @api_router.get("/auth/me")
 async def me(user: User = Depends(current_user)):
     return public_user(user)
+
+
+# ---------------- Social sign-in (Emergent Google, Apple) ----------------
+EMERGENT_SESSION_URL = "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data"
+APPLE_ISSUER = "https://appleid.apple.com"
+APPLE_AUDIENCES = [a.strip() for a in os.environ.get("APPLE_AUDIENCES", "").split(",") if a.strip()]
+apple_jwks = jwt.PyJWKClient(f"{APPLE_ISSUER}/auth/keys", cache_keys=True)
+
+
+async def upsert_social_user(email: Optional[str], name: Optional[str], picture: Optional[str] = None,
+                             apple_sub: Optional[str] = None) -> User:
+    """Links to an existing account (Apple id first, then email) so players keep their tips and role."""
+    doc = await db.users.find_one({"apple_sub": apple_sub}) if apple_sub else None
+    if not doc and email:
+        doc = await db.users.find_one({"email": email})
+    if doc:
+        upd = {}
+        if apple_sub and not doc.get("apple_sub"):
+            upd["apple_sub"] = apple_sub
+        if picture and not doc.get("picture"):
+            upd["picture"] = picture
+        if upd:
+            await db.users.update_one({"_id": doc["_id"]}, {"$set": upd})
+            doc.update(upd)
+        return User.from_mongo(doc)
+    display = (name or "").strip() or (email.split("@")[0] if email else "Apple player")
+    user = User(email=email or f"apple_{apple_sub[:12]}@privaterelay.local", name=display[:40],
+                apple_sub=apple_sub, picture=picture)
+    res = await db.users.insert_one(user.to_mongo())
+    user.id = str(res.inserted_id)
+    return user
+
+
+@api_router.post("/auth/session")
+async def google_session(body: GoogleSessionIn):
+    """Exchanges the one-time Emergent session_id (from the Google redirect) for an app token."""
+    async with httpx.AsyncClient(timeout=20) as c:
+        r = await c.get(EMERGENT_SESSION_URL, headers={"X-Session-ID": body.session_id})
+    if r.status_code != 200:
+        raise HTTPException(401, "Google sign-in failed or expired. Please try again")
+    data = r.json()
+    email = (data.get("email") or "").lower().strip()
+    if not email:
+        raise HTTPException(401, "Google account has no email")
+    user = await upsert_social_user(email, data.get("name"), data.get("picture"))
+    token = make_token(user)
+    return {"session_token": token, "token": token, "user": public_user(user)}
+
+
+@api_router.post("/auth/apple")
+async def apple_sign_in(body: AppleIn):
+    try:
+        key = await run_in_threadpool(apple_jwks.get_signing_key_from_jwt, body.identity_token)
+        claims = jwt.decode(body.identity_token, key.key, algorithms=["RS256"], audience=APPLE_AUDIENCES,
+                            issuer=APPLE_ISSUER)
+    except Exception:
+        raise HTTPException(401, "Apple sign-in could not be verified")
+    sub = claims["sub"]
+    token_email = claims.get("email")
+    verified = str(claims.get("email_verified", "false")).lower() == "true"
+    email = (token_email if verified else None) or (body.email if not token_email else None)
+    user = await upsert_social_user(email.lower().strip() if email else None, body.name, apple_sub=sub)
+    token = make_token(user)
+    return {"session_token": token, "token": token, "user": public_user(user)}
 
 
 # ---------------- Teams ----------------

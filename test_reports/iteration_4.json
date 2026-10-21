@@ -1,0 +1,35 @@
+{
+  "summary": "Iteration 4 validated Emergent Google + Apple social sign-in on top of existing email/password JWT auth for Tipmasters (Metro Pennant bowls). Backend: new /app/backend/tests/test_social_auth.py – 10/10 pytest cases PASS (no season mutation; one disposable TEST_social_* player registered & cleaned up via DELETE /api/admin/players/{id}). Confirmed POST /api/auth/session returns 422 on missing body, 401 on invalid 'invalid123' + random garbage session_id (detail: 'Google sign-in failed or expired. Please try again'); POST /api/auth/apple returns 422 on missing body, 401 on 'not-a-jwt' and on a RS256-shaped bogus JWT (detail: 'Apple sign-in could not be verified'); POST /api/auth/login admin@tipping.com/Admin@123 -> 200 with token+user(role=admin), GET /api/auth/me with Bearer token -> 200 (role=admin, email echoed, no mongo _id), /me without token -> 401; register+login+/me round-trip works for a new player. Frontend (390x844): login screen renders TIPMASTERS hero + Sign in / Join comp segment + email + password + SIGN IN; the SocialButtons block shows the 'or' divider followed by a single white 'Continue with Google' pill with Google logo (testID google-signin-button); apple-signin-button is NOT in the DOM on web (count=0) – matches Platform.OS==='ios' gate. Clicking google-signin-button triggers a top-level navigation to https://auth.emergentagent.com/?redirect=https%3A%2F%2Ffooty-tips-2.preview.emergentagent.com%2F (captured via route interception – matches encodeURIComponent(window.location.origin+'/')). Admin email login still works end-to-end: form submit navigates away from login into (tabs); Profile tab -> logout-button returns to the login screen with app-title visible. Deep-link return handling: opening /#session_id=invalid123 triggers the POST /api/auth/session exchange (observed 401 console), renders the auth-error box with text 'Google sign-in failed or expired. Please try again', and cleanWebUrl() strips session_id (final URL = /login, 'session_id' not present in query or hash). No red screens, no React Native component errors, no deprecated expo-av/expo-barcode-scanner/expo-background-fetch imports found in auth.tsx or SocialButtons.tsx (uses expo-apple-authentication, expo-linking, expo-web-browser – all current).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_social_auth.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "auth.tsx cleanWebUrl() strips session_id from BOTH query and hash which is correct, but it also drops any other hash fragments with no session_id key (benign today – app doesn't use other hash state – but worth a comment).",
+    "auth.tsx exchange() is guarded by sentIds Set so the same sid can't be exchanged twice, but if the user manually revisits /#session_id=invalid123 a second time, sentIds still contains 'invalid123' from the previous render and the retry is silently skipped (no error shown). Minor edge case; acceptable.",
+    "server.py /auth/session returns BOTH 'session_token' and 'token' keys with the same value for backward compat – fine, but a one-line docstring noting that would help future readers.",
+    "server.py /auth/apple uses jwt.decode with audience=APPLE_AUDIENCES; if APPLE_AUDIENCES env is empty the list is [] and jwt.decode will raise InvalidAudienceError for any valid Apple token – OK while native build isn't ready, but call out when the iOS bundle id is provisioned.",
+    "SocialButtons.tsx: Platform.OS === 'ios' gate for appleAvailable is correct for the web preview (hides button) but AppleAuthentication.isAvailableAsync() is only called on iOS; on Android the Apple button will also stay hidden, which is the intended cross-platform behaviour.",
+    "login.tsx: when authError from context is set and the user then types in email/password, the error box stays visible until they switch tabs; consider clearing authError on first keystroke via clearAuthError() for a cleaner UX (minor)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_social_auth.py (new - 10 cases, safe for live season)",
+    "/app/test_reports/iteration_4.json (new)",
+    "/app/test_reports/pytest/pytest_results.xml (regenerated with 10 tests)"
+  ],
+  "success_rate": {"backend": "100% (10/10)", "frontend": "100% (all 7 requested checks)"},
+  "seed_data_creation": "Created 1 ephemeral TEST_social_* player via POST /api/auth/register and deleted it via DELETE /api/admin/players/{id} inside the test. No tips submitted, no results set, no kickoffs changed, no rounds/teams/matches added. Admin login used read-only during UI test (navigated to home tabs, then logged out).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Social-auth coverage lives in /app/backend/tests/test_social_auth.py – safe to re-run anytime. Admin cleanup endpoint is DELETE /api/admin/players/{id} (returns 200). Google redirect URL verified: https://auth.emergentagent.com/?redirect=<encoded origin + '/'> – captured via page.route interception (abort to prevent actually loading Google). Deep-link error path uses hash fragment '/#session_id=...' and the error renders in [data-testid=auth-error]. Apple button is gated to Platform.OS==='ios' so it will NOT show on the web preview or on Android – that's intended, do not report as a bug. Live-data rule still applies: do NOT run /app/backend/tests/backend_test.py / test_fixture_and_teams.py / test_kickoff_and_alltips.py against the live season.",
+  "rca_of_issue": "No bugs found. All 7 features from the review request behave exactly as specified; both backend endpoints enforce 422 (missing body / schema violation) and 401 (invalid credential) correctly, and the web client wires the Emergent redirect, deep-link exchange, URL cleanup, and auth-error surface correctly."
+}

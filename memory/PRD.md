@@ -55,6 +55,12 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Admin "Players" tab: list players (email, tip count) and remove with inline confirm. GET /api/admin/players, DELETE /api/admin/players/{id} (deletes user + tips; admins protected). Works after publishing
 - Testing caution: test runs must clean up any accounts they register
 
+## Iteration 8 (2026-06)
+- Emergent-managed Google sign-in: "Continue with Google" on login (web redirect + native auth session with deep-link fallbacks); backend POST /api/auth/session exchanges session_id once, links to existing account by email, returns app JWT
+- Sign in with Apple (iOS only, needs native build or Expo Go on iOS): POST /api/auth/apple verifies identity token vs Apple JWKS (APPLE_AUDIENCES = bundle id + host.exp.Exponent); users keyed by apple_sub, linked by verified email
+- app.json: ios.usesAppleSignIn + expo-apple-authentication plugin
+- Tested: 10/10 backend + login UI flows (real Google/Apple logins need manual check)
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

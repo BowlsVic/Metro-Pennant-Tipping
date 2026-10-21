@@ -12,7 +12,8 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Choose club logos from your photos"
       },
-      "bundleIdentifier": "com.emergent.footytips.n4o11s"
+      "bundleIdentifier": "com.emergent.footytips.n4o11s",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -28,6 +29,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-apple-authentication",
       [
         "expo-splash-screen",
         {

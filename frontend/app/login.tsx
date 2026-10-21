@@ -7,6 +7,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth";
+import { SocialButtons } from "@/src/components/SocialButtons";
 import { Button } from "@/src/components/ui";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 
@@ -14,7 +15,7 @@ const HERO =
   "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200";
 
 export default function Login() {
-  const { user, login, register } = useAuth();
+  const { user, login, register, authError } = useAuth();
   const styles = useStyles();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -26,6 +27,7 @@ export default function Login() {
   const [err, setErr] = useState<string | null>(null);
 
   if (user) return <Redirect href="/(tabs)" />;
+  const shownErr = err ?? authError;
 
   const submit = async () => {
     setErr(null);
@@ -67,9 +69,9 @@ export default function Login() {
             ))}
           </View>
 
-          {err && (
+          {shownErr && (
             <View testID="auth-error" style={styles.errBox}>
-              <Text style={styles.errText}>{err}</Text>
+              <Text style={styles.errText}>{shownErr}</Text>
             </View>
           )}
 
@@ -105,6 +107,7 @@ export default function Login() {
             onSubmitEditing={submit}
           />
           <Button testID="auth-submit-button" title={mode === "login" ? "Sign in" : "Create account"} onPress={submit} loading={busy} />
+          <SocialButtons onError={setErr} />
         </View>
       </KeyboardAwareScrollView>
     </View>
