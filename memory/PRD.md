@@ -50,6 +50,11 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Verified via simulated Bowlslink payloads + test tips (all cleaned up)
 - Note: ladder contains ~28 leftover test accounts from earlier testing; awaiting user decision to delete
 
+## Iteration 7 (2026-06)
+- Removed 29 leftover @example.com test accounts (+ their tips). Kept real player Mel BV (melanietags@hotmail.com)
+- Admin "Players" tab: list players (email, tip count) and remove with inline confirm. GET /api/admin/players, DELETE /api/admin/players/{id} (deletes user + tips; admins protected). Works after publishing
+- Testing caution: test runs must clean up any accounts they register
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

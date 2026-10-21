@@ -64,7 +64,7 @@ export default function ProfileScreen() {
             <Ionicons name="construct" size={22} color={colors.onBrandTertiary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.adminTitle}>Admin dashboard</Text>
-              <Text style={styles.adminSub}>Enter results, edit fixtures, add finals, edit teams</Text>
+              <Text style={styles.adminSub}>Results, fixtures, finals, teams and players</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.onBrandTertiary} />
           </Pressable>

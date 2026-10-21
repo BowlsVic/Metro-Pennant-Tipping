@@ -830,6 +830,29 @@ async def import_logos(_: User = Depends(admin_user)):
     return {"imported": imported, "failed": failed}
 
 
+@api_router.get("/admin/players")
+async def list_players(_: User = Depends(admin_user)):
+    out = []
+    async for u in db.users.find({"role": {"$ne": "admin"}}).sort("created_at", 1):
+        user = User.from_mongo(u)
+        out.append({"id": user.id, "name": user.name, "email": user.email, "created_at": user.created_at,
+                    "tips": await db.tips.count_documents({"user_id": user.id})})
+    return out
+
+
+@api_router.delete("/admin/players/{user_id}")
+async def remove_player(user_id: str, _: User = Depends(admin_user)):
+    """Removes a player and all their tips. Admin accounts can't be removed here."""
+    user = User.from_mongo(await db.users.find_one({"_id": oid(user_id)}))
+    if not user:
+        raise HTTPException(404, "Player not found")
+    if user.role == "admin":
+        raise HTTPException(400, "Admin accounts can't be removed")
+    await db.tips.delete_many({"user_id": user.id})
+    await db.users.delete_one({"_id": oid(user.id)})
+    return {"deleted": True}
+
+
 app.include_router(api_router)
 
 app.add_middleware(

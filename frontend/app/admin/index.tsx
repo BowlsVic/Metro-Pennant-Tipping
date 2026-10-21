@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api } from "@/src/api";
 import { AdminHeader } from "@/src/components/AdminHeader";
 import { BowlslinkCard } from "@/src/components/BowlslinkCard";
+import { PlayersAdmin } from "@/src/components/PlayersAdmin";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { useToast } from "@/src/components/Toast";
 import { Button } from "@/src/components/ui";
@@ -24,7 +25,7 @@ export default function AdminHome() {
   const toast = useToast();
   const rounds = useRounds();
   const teams = useTeams();
-  const [tab, setTab] = useState<"rounds" | "teams">("rounds");
+  const [tab, setTab] = useState<"rounds" | "teams" | "players">("rounds");
   const [finalName, setFinalName] = useState("");
   const [adding, setAdding] = useState(false);
 
@@ -48,15 +49,17 @@ export default function AdminHome() {
     <View style={styles.root}>
       <AdminHeader title="ADMIN" />
       <View style={styles.segment}>
-        {(["rounds", "teams"] as const).map((t) => (
+        {(["rounds", "teams", "players"] as const).map((t) => (
           <Pressable key={t} testID={`admin-tab-${t}`} onPress={() => setTab(t)} style={[styles.segBtn, tab === t && styles.segActive]}>
-            <Text style={[styles.segText, tab === t && styles.segTextActive]}>{t === "rounds" ? "Fixtures & Results" : "Manage Teams"}</Text>
+            <Text style={[styles.segText, tab === t && styles.segTextActive]}>{t === "rounds" ? "Fixtures" : t === "teams" ? "Teams" : "Players"}</Text>
           </Pressable>
         ))}
       </View>
 
       <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ padding: spacing.lg, gap: spacing.sm, paddingBottom: insets.bottom + spacing.lg }}>
-        {tab === "rounds" ? (
+        {tab === "players" ? (
+          <PlayersAdmin />
+        ) : tab === "rounds" ? (
           <>
             <BowlslinkCard />
             <View style={styles.addBox}>
