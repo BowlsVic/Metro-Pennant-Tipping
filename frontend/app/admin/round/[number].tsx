@@ -9,6 +9,8 @@ import { api, MatchItem, Team } from "@/src/api";
 import { AdminHeader } from "@/src/components/AdminHeader";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { TeamPickerModal } from "@/src/components/TeamPickerModal";
+import { KickoffModal } from "@/src/components/KickoffModal";
+import { formatKickoff } from "@/src/time";
 import { useToast } from "@/src/components/Toast";
 import { Button } from "@/src/components/ui";
 import { useRound, useRounds, useTeams } from "@/src/hooks";
@@ -29,6 +31,7 @@ export default function AdminRound() {
   const rounds = useRounds();
   const teams = useTeams();
   const [picker, setPicker] = useState<PickerState>(null);
+  const [kickMatch, setKickMatch] = useState<MatchItem | null>(null);
   const [busy, setBusy] = useState(false);
 
   const refresh = () => {
@@ -118,6 +121,13 @@ export default function AdminRound() {
                     <Ionicons name="trash-outline" size={20} color={colors.error} />
                   </Pressable>
                 </View>
+                <Pressable testID={`admin-match-${i}-kickoff`} onPress={() => setKickMatch(m)} style={styles.kickBtn}>
+                  <Ionicons name="time-outline" size={16} color={m.kickoff ? colors.brandPrimary : colors.muted} />
+                  <Text style={[styles.kickText, !!m.kickoff && styles.kickSet]}>
+                    {m.kickoff ? formatKickoff(m.kickoff) : "Set kick-off time"}{m.started ? " · started" : ""}
+                  </Text>
+                  <Ionicons name="create-outline" size={16} color={colors.muted} />
+                </Pressable>
                 <Text style={styles.resultLbl}>RESULT</Text>
                 <View style={styles.opts}>
                   {opt(home?.short ?? "Home", m.home_team_id, "home")}
@@ -153,6 +163,25 @@ export default function AdminRound() {
         onPick={onPick}
         onClose={() => setPicker(null)}
       />
+      <KickoffModal
+        visible={!!kickMatch}
+        initial={kickMatch?.kickoff ?? null}
+        onClose={() => setKickMatch(null)}
+        onSave={(iso) => {
+          const m = kickMatch!;
+          setKickMatch(null);
+          run(() => api(`/matches/${m.id}`, { method: "PUT", body: { kickoff: iso } }), "Kick-off saved");
+        }}
+        onSaveAll={(iso) => {
+          setKickMatch(null);
+          run(() => Promise.all((r?.matches ?? []).map((m) => api(`/matches/${m.id}`, { method: "PUT", body: { kickoff: iso } }))), "Kick-off set for all matches");
+        }}
+        onClear={() => {
+          const m = kickMatch!;
+          setKickMatch(null);
+          run(() => api(`/matches/${m.id}`, { method: "PUT", body: { clear_kickoff: true } }), "Kick-off cleared");
+        }}
+      />
     </View>
   );
 }
@@ -170,6 +199,9 @@ const useStyles = makeStyles((c) => ({
   vs: { color: c.muted, fontFamily: fonts.display, fontSize: 13 },
   del: { width: 36, height: 44, alignItems: "center", justifyContent: "center" },
   resultLbl: { color: c.muted, fontFamily: fonts.display, fontSize: 12, letterSpacing: 1 },
+  kickBtn: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 40, paddingHorizontal: spacing.sm, borderRadius: radius.sm, backgroundColor: c.surfaceTertiary },
+  kickText: { flex: 1, color: c.muted, fontFamily: fonts.displaySemi, fontSize: 14 },
+  kickSet: { color: c.onSurface },
   opts: { flexDirection: "row", gap: spacing.xs },
   opt: { flex: 1, height: 40, borderRadius: radius.sm, backgroundColor: c.surfaceTertiary, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: c.border },
   optActive: { backgroundColor: c.brandPrimary, borderColor: c.brandPrimary },

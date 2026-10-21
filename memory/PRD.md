@@ -18,7 +18,12 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Admin: add/delete finals rounds, lock rounds, add/edit/delete matches, enter results (home/draw/away/TBD), edit team name/code/colours/icon
 - Tested: 16/16 backend tests, all frontend flows pass
 
+## Iteration 2 (2026-06)
+- Kick-off times per match (ISO UTC); tips auto-lock at kick-off (server + live client tick). Seeded weekly Saturday kick-offs. Admin kick-off modal (day/hour/min steppers, apply to all, clear)
+- Everyone's tips screen (/round-tips/[n]): per-match tipping split + player-by-player table, revealed match-by-match once locked (no leaks)
+- Tested: 27/27 backend, frontend flows pass
+
 ## Backlog
-- P1: Match kick-off times with auto-lock; view other players' tips after lock
+- P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard
 - P2: Private leagues / invite codes; custom uploaded team logos

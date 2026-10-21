@@ -1,7 +1,8 @@
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,9 +12,10 @@ import { RoundChips } from "@/src/components/RoundChips";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { useToast } from "@/src/components/Toast";
 import { Button, EmptyState, ErrorState } from "@/src/components/ui";
-import { useRound, useRounds, useTeams } from "@/src/hooks";
+import { useNow, useRound, useRounds, useTeams } from "@/src/hooks";
 import { usesNativeTabs } from "@/src/navigation";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
+import { formatKickoff, hasStarted, untilLabel } from "@/src/time";
 
 export default function TipsScreen() {
   const styles = useStyles();
@@ -21,6 +23,7 @@ export default function TipsScreen() {
   const insets = useSafeAreaInsets();
   const bottomChrome = usesNativeTabs ? insets.bottom : 0;
   const qc = useQueryClient();
+  const router = useRouter();
   const toast = useToast();
   const rounds = useRounds();
   const { map: teams } = useTeams();
@@ -42,9 +45,18 @@ export default function TipsScreen() {
     setPicks(p);
   }, [round.data]);
 
-  const openMatches = useMemo(() => round.data?.matches.filter((m) => !m.locked) ?? [], [round.data]);
+  const now = useNow();
+  const isLocked = (m: MatchItem) => m.locked || hasStarted(m.kickoff, now);
+  const openMatches = round.data?.matches.filter((m) => !isLocked(m)) ?? [];
   const dirty = openMatches.some((m) => picks[m.id] && picks[m.id] !== m.my_tip);
   const pickedOpen = openMatches.filter((m) => picks[m.id]).length;
+  const anyRevealed = round.data?.matches.some(isLocked) ?? false;
+  const staleLock = round.data?.matches.some((m) => !m.locked && hasStarted(m.kickoff, now)) ?? false;
+
+  useEffect(() => {
+    if (staleLock) round.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [staleLock]);
 
   const submit = async () => {
     if (!selected) return;
@@ -96,11 +108,23 @@ export default function TipsScreen() {
             refreshControl={<RefreshControl refreshing={round.isRefetching} onRefresh={refresh} tintColor={colors.brandPrimary} />}
           >
             <View style={styles.roundHead}>
-              <Text testID="round-name" style={styles.roundName}>{r.name}</Text>
-              <Text style={styles.roundMeta}>
-                {r.locked ? "LOCKED" : r.complete ? "COMPLETE" : `${r.matches.length} MATCHES`}
-                {r.my_bonus ? "  ·  +1 PERFECT ROUND BONUS" : ""}
-              </Text>
+              <View style={{ flex: 1 }}>
+                <Text testID="round-name" style={styles.roundName}>{r.name}</Text>
+                <Text style={styles.roundMeta}>
+                  {r.locked ? "LOCKED" : r.complete ? "COMPLETE" : `${r.matches.length} MATCHES`}
+                  {r.my_bonus ? "  ·  +1 PERFECT ROUND BONUS" : ""}
+                </Text>
+              </View>
+              {anyRevealed && (
+                <Pressable
+                  testID="everyone-tips-button"
+                  onPress={() => router.push(`/round-tips/${r.number}`)}
+                  style={({ pressed }) => [styles.allBtn, pressed && styles.pressed]}
+                >
+                  <Ionicons name="people" size={16} color={colors.onBrandTertiary} />
+                  <Text style={styles.allBtnText}>Everyone&apos;s tips</Text>
+                </Pressable>
+              )}
             </View>
             {r.matches.length === 0 ? (
               <EmptyState testID="round-empty" title="Round not configured yet" subtitle="Fixtures for this round will appear here once the admin adds them." />
@@ -112,6 +136,8 @@ export default function TipsScreen() {
                     home={teams[m.home_team_id]}
                     away={teams[m.away_team_id]}
                     pick={picks[m.id]}
+                    locked={isLocked(m)}
+                    now={now}
                     onPick={(tid) => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                       setPicks((p) => ({ ...p, [m.id]: tid }));
@@ -140,7 +166,7 @@ export default function TipsScreen() {
   );
 }
 
-function MatchCard({ match, home, away, pick, onPick }: { match: MatchItem; home?: Team; away?: Team; pick?: string; onPick: (id: string) => void }) {
+function MatchCard({ match, home, away, pick, locked, now, onPick }: { match: MatchItem; home?: Team; away?: Team; pick?: string; locked: boolean; now: number; onPick: (id: string) => void }) {
   const styles = useStyles();
   const { colors } = useTheme();
   const decided = match.winner_team_id;
@@ -150,7 +176,7 @@ function MatchCard({ match, home, away, pick, onPick }: { match: MatchItem; home
     return (
       <Pressable
         testID={`match-${match.order}-pick-${testSide}`}
-        disabled={match.locked}
+        disabled={locked}
         onPress={() => onPick(id)}
         style={({ pressed }) => [styles.side, selected && styles.sideSelected, pressed && styles.pressed]}
       >
@@ -162,13 +188,20 @@ function MatchCard({ match, home, away, pick, onPick }: { match: MatchItem; home
   };
   return (
     <View testID={`match-card-${match.order}`} style={[styles.card, match.correct === true && styles.cardCorrect, match.correct === false && styles.cardWrong]}>
+      <View style={styles.kickRow}>
+        <Ionicons name={locked ? "lock-closed" : "time-outline"} size={13} color={locked ? colors.warning : colors.onSurfaceTertiary} />
+        <Text testID={`match-${match.order}-kickoff`} style={[styles.kickText, locked && styles.kickLocked]}>
+          {match.kickoff ? formatKickoff(match.kickoff) : "Kick-off TBC"}
+          {decided ? "  ·  FULL TIME" : locked ? "  ·  TIPS LOCKED" : match.kickoff ? `  ·  ${untilLabel(match.kickoff, now)}` : ""}
+        </Text>
+      </View>
       <View style={styles.cardRow}>
         {side(home, match.home_team_id, "home")}
         <View style={styles.vs}>
           <Text style={styles.vsText}>{decided === "draw" ? "DRAW" : "VS"}</Text>
           {match.correct === true && <Ionicons name="checkmark-circle" size={22} color={colors.success} />}
           {match.correct === false && <Ionicons name="close-circle" size={22} color={colors.error} />}
-          {match.locked && match.correct === null && !pick && <Ionicons name="lock-closed" size={16} color={colors.muted} />}
+          {locked && match.correct === null && !pick && <Ionicons name="lock-closed" size={16} color={colors.muted} />}
         </View>
         {side(away, match.away_team_id, "away")}
       </View>
@@ -186,7 +219,12 @@ const useStyles = makeStyles((c) => ({
   scoreLbl: { color: c.onBrandTertiary, fontFamily: fonts.displaySemi, fontSize: 12 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   list: { padding: spacing.lg, gap: spacing.md },
-  roundHead: { marginBottom: spacing.xs },
+  roundHead: { marginBottom: spacing.xs, flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  allBtn: { flexDirection: "row", alignItems: "center", gap: spacing.xs, height: 36, paddingHorizontal: spacing.md, borderRadius: radius.pill, backgroundColor: c.brandTertiary },
+  allBtnText: { color: c.onBrandTertiary, fontFamily: fonts.displaySemi, fontSize: 15 },
+  kickRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, paddingHorizontal: spacing.sm, paddingTop: spacing.xs },
+  kickText: { color: c.onSurfaceTertiary, fontFamily: fonts.displaySemi, fontSize: 13, letterSpacing: 0.3 },
+  kickLocked: { color: c.warning },
   roundName: { color: c.onSurface, fontFamily: fonts.display, fontSize: 24 },
   roundMeta: { color: c.brandPrimary, fontFamily: fonts.displaySemi, fontSize: 13, letterSpacing: 1 },
   card: { backgroundColor: c.surfaceSecondary, borderRadius: radius.lg, borderWidth: 1, borderColor: c.border, padding: spacing.sm },

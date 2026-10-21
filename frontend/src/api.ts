@@ -7,11 +7,20 @@ export type Team = { id: string; name: string; short: string; color: string; sec
 export type User = { id: string; email: string; name: string; role: "user" | "admin" };
 export type RoundSummary = {
   id: string; number: number; name: string; is_final: boolean; locked: boolean;
-  match_count: number; decided_count: number; tipped_count: number; complete: boolean;
+  match_count: number; decided_count: number; revealed_count: number; tipped_count: number; complete: boolean;
 };
 export type MatchItem = {
   id: string; round_number: number; order: number; home_team_id: string; away_team_id: string;
-  winner_team_id: string | null; my_tip: string | null; locked: boolean; correct: boolean | null;
+  winner_team_id: string | null; kickoff: string | null; started: boolean;
+  my_tip: string | null; locked: boolean; correct: boolean | null;
+};
+export type AllTips = {
+  number: number; name: string;
+  matches: {
+    match_id: string; order: number; home_team_id: string; away_team_id: string; winner_team_id: string | null;
+    kickoff: string | null; revealed: boolean; home_count: number; away_count: number;
+  }[];
+  players: { user_id: string; name: string; tips: Record<string, string>; correct: number }[];
 };
 export type RoundDetail = RoundSummary & {
   matches: MatchItem[]; my_correct: number; my_bonus: number; my_points: number;

@@ -82,6 +82,21 @@ class Match(BaseDocument):
     home_team_id: str
     away_team_id: str
     winner_team_id: Optional[str] = None  # team id or "draw"
+    kickoff: Optional[str] = None  # ISO 8601 UTC
+
+    def started(self) -> bool:
+        if not self.kickoff:
+            return False
+        try:
+            k = datetime.fromisoformat(self.kickoff.replace("Z", "+00:00"))
+        except ValueError:
+            return False
+        if k.tzinfo is None:
+            k = k.replace(tzinfo=timezone.utc)
+        return k <= datetime.now(timezone.utc)
+
+    def is_locked(self, round_locked: bool) -> bool:
+        return round_locked or self.winner_team_id is not None or self.started()
 
 
 class Tip(BaseDocument):
@@ -138,6 +153,8 @@ class MatchUpdate(BaseModel):
     away_team_id: Optional[str] = None
     winner_team_id: Optional[str] = None
     clear_result: bool = False
+    kickoff: Optional[str] = None
+    clear_kickoff: bool = False
 
 
 # ---------------- Auth helpers ----------------
@@ -233,13 +250,17 @@ async def seed():
     if await db.rounds.count_documents({}) == 0:
         team_ids = [str(t["_id"]) async for t in db.teams.find().sort("_id", 1)]
         rr = round_robin(team_ids)
+        now = datetime.now(timezone.utc)
+        first_sat = (now + timedelta(days=(5 - now.weekday()) % 7 or 7)).replace(hour=5, minute=0, second=0, microsecond=0)
         for r in range(REGULAR_ROUNDS):
             num = r + 1
             await db.rounds.insert_one(Round(number=num, name=f"Round {num}").to_mongo())
             pairs = rr[r % len(rr)]
             if r >= len(rr):
                 pairs = [(b, a) for a, b in pairs]
-            await db.matches.insert_many([Match(round_number=num, order=i, home_team_id=a, away_team_id=b).to_mongo()
+            day = first_sat + timedelta(weeks=r)
+            await db.matches.insert_many([Match(round_number=num, order=i, home_team_id=a, away_team_id=b,
+                                                kickoff=(day + timedelta(hours=2 * i)).isoformat()).to_mongo()
                                           for i, (a, b) in enumerate(pairs)])
 
 
@@ -295,8 +316,10 @@ async def round_summaries(user_id: Optional[str] = None):
     for r in rounds:
         matches = [Match.from_mongo(m) async for m in db.matches.find({"round_number": r.number})]
         decided = sum(1 for m in matches if m.winner_team_id)
+        revealed = sum(1 for m in matches if m.is_locked(r.locked))
         tipped = await db.tips.count_documents({"user_id": user_id, "round_number": r.number}) if user_id else 0
         out.append({**r.model_dump(), "match_count": len(matches), "decided_count": decided,
+                    "revealed_count": revealed,
                     "tipped_count": tipped, "complete": len(matches) > 0 and decided == len(matches)})
     return out
 
@@ -319,7 +342,7 @@ async def get_round(number: int, user: User = Depends(current_user)):
         my = tips.get(m.id)
         is_correct = bool(m.winner_team_id and my and my == m.winner_team_id)
         correct += int(is_correct)
-        out.append({**m.model_dump(), "my_tip": my, "locked": r.locked or m.winner_team_id is not None,
+        out.append({**m.model_dump(), "my_tip": my, "locked": m.is_locked(r.locked), "started": m.started(),
                     "correct": is_correct if m.winner_team_id else None})
     complete = len(matches) > 0 and all(m.winner_team_id for m in matches)
     bonus = 1 if complete and correct == len(matches) else 0
@@ -335,18 +358,52 @@ async def submit_tips(number: int, body: TipsIn, user: User = Depends(current_us
     if r.locked:
         raise HTTPException(400, "This round is locked")
     saved = 0
+    skipped = 0
     for t in body.tips:
         m = Match.from_mongo(await db.matches.find_one({"_id": oid(t.match_id), "round_number": number}))
         if not m:
             raise HTTPException(404, "Match not found")
-        if m.winner_team_id:
+        if m.is_locked(False):
+            skipped += 1
             continue
         if t.team_id not in (m.home_team_id, m.away_team_id):
             raise HTTPException(400, "Team not in match")
         tip = Tip(user_id=user.id, match_id=m.id, round_number=number, team_id=t.team_id)
         await db.tips.update_one({"user_id": user.id, "match_id": m.id}, {"$set": tip.to_mongo()}, upsert=True)
         saved += 1
-    return {"saved": saved}
+    return {"saved": saved, "skipped": skipped}
+
+
+@api_router.get("/rounds/{number}/all-tips")
+async def round_all_tips(number: int, _: User = Depends(current_user)):
+    """Everyone's tips, revealed per match once that match is locked (kick-off, result, or round lock)."""
+    r = Round.from_mongo(await db.rounds.find_one({"number": number}))
+    if not r:
+        raise HTTPException(404, "Round not found")
+    matches = [Match.from_mongo(m) async for m in db.matches.find({"round_number": number}).sort("order", 1)]
+    revealed = {m.id for m in matches if m.is_locked(r.locked)}
+    users = {str(u["_id"]): User.from_mongo(u) async for u in db.users.find({"role": {"$ne": "admin"}})}
+    picks: dict = {}
+    async for t in db.tips.find({"round_number": number, "match_id": {"$in": list(revealed)}}):
+        tip = Tip.from_mongo(t)
+        if tip.user_id in users:
+            picks.setdefault(tip.user_id, {})[tip.match_id] = tip.team_id
+    winners = {m.id: m.winner_team_id for m in matches}
+    out_matches = []
+    for m in matches:
+        home = sum(1 for p in picks.values() if p.get(m.id) == m.home_team_id)
+        away = sum(1 for p in picks.values() if p.get(m.id) == m.away_team_id)
+        out_matches.append({"match_id": m.id, "order": m.order, "home_team_id": m.home_team_id,
+                            "away_team_id": m.away_team_id, "winner_team_id": m.winner_team_id,
+                            "kickoff": m.kickoff, "revealed": m.id in revealed,
+                            "home_count": home, "away_count": away})
+    players = []
+    for uid, u in users.items():
+        p = picks.get(uid, {})
+        correct = sum(1 for mid, tid in p.items() if winners.get(mid) == tid)
+        players.append({"user_id": uid, "name": u.name, "tips": p, "correct": correct})
+    players.sort(key=lambda x: (-x["correct"], x["name"].lower()))
+    return {"number": r.number, "name": r.name, "matches": out_matches, "players": players}
 
 
 @api_router.post("/rounds")
@@ -420,6 +477,16 @@ async def update_match(match_id: str, body: MatchUpdate, _: User = Depends(admin
         await team_exists(away)
         upd.update(home_team_id=home, away_team_id=away, winner_team_id=None)
         await db.tips.delete_many({"match_id": m.id})
+    if body.clear_kickoff:
+        upd["kickoff"] = None
+    elif body.kickoff is not None:
+        try:
+            k = datetime.fromisoformat(body.kickoff.replace("Z", "+00:00"))
+        except ValueError:
+            raise HTTPException(400, "Invalid kick-off time")
+        if k.tzinfo is None:
+            k = k.replace(tzinfo=timezone.utc)
+        upd["kickoff"] = k.astimezone(timezone.utc).isoformat()
     if body.clear_result:
         upd["winner_team_id"] = None
     elif body.winner_team_id is not None:

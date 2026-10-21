@@ -1,0 +1,36 @@
+{
+  "summary": "Iteration 2 full-stack validation of kick-off auto-lock + Everyone's tips features. Backend: 27/27 pytest cases pass (16 regression + 11 new in /app/backend/tests/test_kickoff_and_alltips.py) covering admin PUT /matches/{id} with kickoff/clear_kickoff, invalid kickoff -> 400, non-admin -> 403, future/past kickoff -> locked/started flags, submit_tips returns {saved, skipped} skipping started matches, GET /rounds exposes revealed_count, GET /rounds/{n}/all-tips auth-gated, admin excluded, counts & revealed gating correct, and critically NO leak of un-revealed match tips in player picks. Frontend (390x844 web preview): registered a new player, navigated to Round 13 (with admin-forced past-kickoff on match 0, future on others), confirmed match card displays 'Wed 21 Oct · 1:17 AM · TIPS LOCKED' with lock icon, future match shows 'Locks in 30d', locked match pick buttons are disabled (my_tip remained empty), the 'everyone-tips-button' appeared and navigates to /round-tips/13 where split-card-0 renders with correct counts (2-0) and split-card-1 is correctly hidden; player-by-player table lists all players, shows '(you)' highlight. Admin flow: /admin/round/1 shows admin-match-{i}-kickoff rows; opening modal renders day/hour/min steppers, 'Save kick-off', 'Apply to all', 'Clear' buttons as per spec. All R13 kickoffs were restored to original future values after testing; no finals rounds were added.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "pointerEvents prop (prior iteration)", "issue": "Console warning 'props.pointerEvents is deprecated. Use style.pointerEvents' still emitted by react-native-web internals. Non-blocking; carry-over from iteration 1."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/test_kickoff_and_alltips.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py Match.started() silently treats invalid ISO strings as not-started - acceptable but could log; validation on PUT already blocks invalid input so DB stays clean.",
+    "server.py submit_tips re-fetches each match sequentially - fine for 4-8 matches/round but could batch with $in for larger rounds.",
+    "/api/rounds/{n}/all-tips excludes admin via users dict filter - this is correct and double-protects since picks dict is keyed by user_id that was filtered.",
+    "frontend (tabs)/index.tsx uses useNow() ticker to re-evaluate lock without waiting for refetch - good UX; staleLock effect also forces refetch when kickoff crosses now.",
+    "KickoffModal day/hour/min steppers construct Date locally and emit ISO - time zone handling delegated to formatKickoff; verified preview matched Save button payload."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_kickoff_and_alltips.py (new)",
+    "/app/test_reports/iteration_2.json (new)"
+  ],
+  "success_rate": {"backend": "100% (27/27)", "frontend": "100% critical paths"},
+  "seed_data_creation": "Created 1 ephemeral TEST_fe_* player and several TEST_kt_* players via /api/auth/register. Temporarily modified Round 13 match kickoffs (one past, three future) during tests - all restored to original future ISO values via finally blocks. No finals rounds were added. No team names modified.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Pytest is now at 27 cases. The new file test_kickoff_and_alltips.py always restores Round 13 kickoffs in finally blocks - if a test is interrupted mid-run you may need to re-run or manually PUT /api/matches/{id} with the correct future kickoff to repair state. Admin login: admin@tipping.com / Admin@123. Frontend testIDs confirmed: 'auth-mode-register', 'register-name-input', 'auth-email-input', 'auth-password-input', 'auth-submit-button', 'round-chip-{n}', 'round-name', 'everyone-tips-button', 'match-{i}-kickoff', 'match-{i}-pick-home|away', 'submit-tips-button', 'split-card-{order}', 'split-count-{order}', 'player-tips-row-{uid}', 'admin-match-{i}-kickoff', 'kickoff-day/hour/minute-plus/minus', 'kickoff-save-button', 'kickoff-save-all-button', 'kickoff-clear-button', 'kickoff-backdrop', 'kickoff-preview'. The /round-tips/[number] route is reachable via Expo Router from the Everyone's tips button.",
+  "rca_of_issue": "No bugs found - new features behave exactly as spec'd."
+}
