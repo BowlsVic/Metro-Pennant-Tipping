@@ -1,0 +1,413 @@
+{
+ "source": "https://results.bowlslink.com.au/competition/649a52f2-d060-44a3-a3c8-707c3f4c77a7",
+ "teams": [
+  {
+   "name": "Melbourne",
+   "short": "MEL",
+   "color": "#002B5C",
+   "secondary": "#FFFFFF",
+   "icon": "star"
+  },
+  {
+   "name": "Glenroy",
+   "short": "GLN",
+   "color": "#C8102E",
+   "secondary": "#FFD100",
+   "icon": "flame"
+  },
+  {
+   "name": "Port Melbourne",
+   "short": "PTM",
+   "color": "#0072CE",
+   "secondary": "#FFFFFF",
+   "icon": "fish"
+  },
+  {
+   "name": "Heathmont",
+   "short": "HTH",
+   "color": "#00843D",
+   "secondary": "#FFD100",
+   "icon": "leaf"
+  },
+  {
+   "name": "Lilydale",
+   "short": "LIL",
+   "color": "#6A1B9A",
+   "secondary": "#FFFFFF",
+   "icon": "diamond"
+  },
+  {
+   "name": "Clayton",
+   "short": "CLA",
+   "color": "#E35205",
+   "secondary": "#1A1A1A",
+   "icon": "flash"
+  },
+  {
+   "name": "Club Sunbury",
+   "short": "SUN",
+   "color": "#F2A900",
+   "secondary": "#1A1A1A",
+   "icon": "sunny"
+  },
+  {
+   "name": "Middle Park",
+   "short": "MPK",
+   "color": "#1A1A1A",
+   "secondary": "#FFFFFF",
+   "icon": "shield"
+  }
+ ],
+ "rounds": [
+  {
+   "number": 1,
+   "matches": [
+    {
+     "home": "Port Melbourne",
+     "away": "Club Sunbury",
+     "kickoff": "2026-10-23T08:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Lilydale",
+     "kickoff": "2026-10-23T08:00:00+00:00"
+    },
+    {
+     "home": "Middle Park",
+     "away": "Glenroy",
+     "kickoff": "2026-10-23T08:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Heathmont",
+     "kickoff": "2026-10-23T08:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 2,
+   "matches": [
+    {
+     "home": "Club Sunbury",
+     "away": "Middle Park",
+     "kickoff": "2026-10-24T02:00:00+00:00"
+    },
+    {
+     "home": "Lilydale",
+     "away": "Melbourne",
+     "kickoff": "2026-10-24T02:00:00+00:00"
+    },
+    {
+     "home": "Glenroy",
+     "away": "Clayton",
+     "kickoff": "2026-10-24T02:00:00+00:00"
+    },
+    {
+     "home": "Heathmont",
+     "away": "Port Melbourne",
+     "kickoff": "2026-10-24T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 3,
+   "matches": [
+    {
+     "home": "Port Melbourne",
+     "away": "Glenroy",
+     "kickoff": "2026-10-30T08:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Club Sunbury",
+     "kickoff": "2026-10-31T02:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Heathmont",
+     "kickoff": "2026-10-31T02:00:00+00:00"
+    },
+    {
+     "home": "Middle Park",
+     "away": "Lilydale",
+     "kickoff": "2026-10-31T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 4,
+   "matches": [
+    {
+     "home": "Heathmont",
+     "away": "Club Sunbury",
+     "kickoff": "2026-11-07T02:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Glenroy",
+     "kickoff": "2026-11-07T02:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Middle Park",
+     "kickoff": "2026-11-07T02:00:00+00:00"
+    },
+    {
+     "home": "Lilydale",
+     "away": "Port Melbourne",
+     "kickoff": "2026-11-07T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 5,
+   "matches": [
+    {
+     "home": "Middle Park",
+     "away": "Heathmont",
+     "kickoff": "2026-11-14T02:00:00+00:00"
+    },
+    {
+     "home": "Port Melbourne",
+     "away": "Melbourne",
+     "kickoff": "2026-11-14T02:00:00+00:00"
+    },
+    {
+     "home": "Glenroy",
+     "away": "Lilydale",
+     "kickoff": "2026-11-14T02:00:00+00:00"
+    },
+    {
+     "home": "Club Sunbury",
+     "away": "Clayton",
+     "kickoff": "2026-11-14T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 6,
+   "matches": [
+    {
+     "home": "Heathmont",
+     "away": "Glenroy",
+     "kickoff": "2026-11-20T08:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Middle Park",
+     "kickoff": "2026-11-21T02:00:00+00:00"
+    },
+    {
+     "home": "Club Sunbury",
+     "away": "Lilydale",
+     "kickoff": "2026-11-21T02:00:00+00:00"
+    },
+    {
+     "home": "Port Melbourne",
+     "away": "Clayton",
+     "kickoff": "2026-11-21T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 7,
+   "matches": [
+    {
+     "home": "Middle Park",
+     "away": "Port Melbourne",
+     "kickoff": "2026-11-28T02:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Melbourne",
+     "kickoff": "2026-11-28T02:00:00+00:00"
+    },
+    {
+     "home": "Lilydale",
+     "away": "Heathmont",
+     "kickoff": "2026-11-28T02:00:00+00:00"
+    },
+    {
+     "home": "Glenroy",
+     "away": "Club Sunbury",
+     "kickoff": "2026-11-28T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 8,
+   "matches": [
+    {
+     "home": "Lilydale",
+     "away": "Clayton",
+     "kickoff": "2026-12-05T02:00:00+00:00"
+    },
+    {
+     "home": "Club Sunbury",
+     "away": "Port Melbourne",
+     "kickoff": "2026-12-05T02:00:00+00:00"
+    },
+    {
+     "home": "Heathmont",
+     "away": "Melbourne",
+     "kickoff": "2026-12-05T02:00:00+00:00"
+    },
+    {
+     "home": "Glenroy",
+     "away": "Middle Park",
+     "kickoff": "2026-12-05T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 9,
+   "matches": [
+    {
+     "home": "Port Melbourne",
+     "away": "Heathmont",
+     "kickoff": "2026-12-12T02:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Lilydale",
+     "kickoff": "2026-12-12T02:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Glenroy",
+     "kickoff": "2026-12-12T02:00:00+00:00"
+    },
+    {
+     "home": "Middle Park",
+     "away": "Club Sunbury",
+     "kickoff": "2026-12-12T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 10,
+   "matches": [
+    {
+     "home": "Glenroy",
+     "away": "Port Melbourne",
+     "kickoff": "2026-12-18T08:00:00+00:00"
+    },
+    {
+     "home": "Heathmont",
+     "away": "Clayton",
+     "kickoff": "2026-12-19T02:00:00+00:00"
+    },
+    {
+     "home": "Lilydale",
+     "away": "Middle Park",
+     "kickoff": "2026-12-19T02:00:00+00:00"
+    },
+    {
+     "home": "Club Sunbury",
+     "away": "Melbourne",
+     "kickoff": "2026-12-19T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 11,
+   "matches": [
+    {
+     "home": "Port Melbourne",
+     "away": "Lilydale",
+     "kickoff": "2027-01-22T08:00:00+00:00"
+    },
+    {
+     "home": "Club Sunbury",
+     "away": "Heathmont",
+     "kickoff": "2027-01-22T08:00:00+00:00"
+    },
+    {
+     "home": "Middle Park",
+     "away": "Clayton",
+     "kickoff": "2027-01-22T08:00:00+00:00"
+    },
+    {
+     "home": "Glenroy",
+     "away": "Melbourne",
+     "kickoff": "2027-01-22T08:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 12,
+   "matches": [
+    {
+     "home": "Lilydale",
+     "away": "Glenroy",
+     "kickoff": "2027-01-23T02:00:00+00:00"
+    },
+    {
+     "home": "Heathmont",
+     "away": "Middle Park",
+     "kickoff": "2027-01-23T02:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Club Sunbury",
+     "kickoff": "2027-01-23T02:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Port Melbourne",
+     "kickoff": "2027-01-23T02:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 13,
+   "matches": [
+    {
+     "home": "Lilydale",
+     "away": "Club Sunbury",
+     "kickoff": "2027-01-29T08:00:00+00:00"
+    },
+    {
+     "home": "Middle Park",
+     "away": "Melbourne",
+     "kickoff": "2027-01-29T08:00:00+00:00"
+    },
+    {
+     "home": "Clayton",
+     "away": "Port Melbourne",
+     "kickoff": "2027-01-29T08:00:00+00:00"
+    },
+    {
+     "home": "Glenroy",
+     "away": "Heathmont",
+     "kickoff": "2027-01-29T08:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "number": 14,
+   "matches": [
+    {
+     "home": "Club Sunbury",
+     "away": "Glenroy",
+     "kickoff": "2027-01-30T02:00:00+00:00"
+    },
+    {
+     "home": "Heathmont",
+     "away": "Lilydale",
+     "kickoff": "2027-01-30T02:00:00+00:00"
+    },
+    {
+     "home": "Melbourne",
+     "away": "Clayton",
+     "kickoff": "2027-01-30T02:00:00+00:00"
+    },
+    {
+     "home": "Port Melbourne",
+     "away": "Middle Park",
+     "kickoff": "2027-01-30T02:00:00+00:00"
+    }
+   ]
+  }
+ ]
+}

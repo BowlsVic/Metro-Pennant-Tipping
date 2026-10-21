@@ -19,7 +19,7 @@ export default function TeamsScreen() {
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
         <Text style={styles.title}>TEAMS</Text>
-        <Text style={styles.sub}>8 clubs battling it out</Text>
+        <Text style={styles.sub}>{q.data?.length ?? 0} clubs battling it out</Text>
       </View>
       {q.isError ? (
         <ErrorState onRetry={q.refetch} />

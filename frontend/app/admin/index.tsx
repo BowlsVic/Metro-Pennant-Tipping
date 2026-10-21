@@ -91,7 +91,11 @@ export default function AdminHome() {
             ))}
           </>
         ) : (
-          teams.data?.map((t) => (
+          <>
+            {(teams.data?.length ?? 0) < 16 && (
+              <Button testID="add-team-button" title={`Add team (${teams.data?.length ?? 0}/16)`} variant="ghost" onPress={() => router.push("/admin/team/new")} style={{ marginBottom: spacing.sm }} />
+            )}
+            {teams.data?.map((t) => (
             <Pressable
               key={t.id}
               testID={`admin-team-${t.short}`}
@@ -105,7 +109,8 @@ export default function AdminHome() {
               </View>
               <Ionicons name="create-outline" size={20} color={colors.muted} />
             </Pressable>
-          ))
+            ))}
+          </>
         )}
       </KeyboardAwareScrollView>
     </View>

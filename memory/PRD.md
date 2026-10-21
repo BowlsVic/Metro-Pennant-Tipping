@@ -23,6 +23,14 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Everyone's tips screen (/round-tips/[n]): per-match tipping split + player-by-player table, revealed match-by-match once locked (no leaks)
 - Tested: 27/27 backend, frontend flows pass
 
+## Iteration 3 (2026-06)
+- Real fixture loaded: 2026-27 Metro Pennant Weekend Premier Reserve (Bowlslink competition 649a52f2-…), rounds 1–14, 56 matches, real kick-off times (UTC; Fri 7pm / Sat 1pm Melbourne). Stored in /app/backend/fixture.json and used as the startup seed (so production gets it too)
+- Placeholder teams replaced with the 8 real clubs (icon logos + assigned colours, editable). Each match locks at its own kick-off
+- Admin can add teams (up to 16) and delete teams not used in fixtures
+- Season reset: no tips, results or finals rounds
+- Note: club logos from Bowlslink not used (Middle Park's image is access-restricted); could add uploaded logos via object storage later
+- Testing caution: backend tests mutate the live season data; always reset rounds/matches/tips after test runs
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

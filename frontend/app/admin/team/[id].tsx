@@ -27,23 +27,43 @@ export default function EditTeam() {
   const qc = useQueryClient();
   const toast = useToast();
   const { map } = useTeams();
+  const isNew = id === "new";
   const team = map[id];
   const [draft, setDraft] = useState<Team | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (team && !draft) setDraft(team);
-  }, [team, draft]);
+    if (draft) return;
+    if (isNew) setDraft({ id: "", name: "", short: "", color: "#0072CE", secondary: "#FFFFFF", icon: "shield" });
+    else if (team) setDraft(team);
+  }, [team, draft, isNew]);
 
   if (!draft) return <View style={styles.root}><AdminHeader title="Team" /></View>;
+
+  const body = () => ({ name: draft.name.trim(), short: draft.short.trim().toUpperCase(), color: draft.color, secondary: draft.secondary, icon: draft.icon });
 
   const save = async () => {
     if (!draft.name.trim() || !draft.short.trim()) return toast("Name and short code are required", "error");
     setSaving(true);
     try {
-      await api(`/teams/${id}`, { method: "PUT", body: { name: draft.name.trim(), short: draft.short.trim().toUpperCase(), color: draft.color, secondary: draft.secondary, icon: draft.icon } });
+      if (isNew) await api("/teams", { method: "POST", body: body() });
+      else await api(`/teams/${id}`, { method: "PUT", body: body() });
       qc.invalidateQueries({ queryKey: ["teams"] });
-      toast("Team updated");
+      toast(isNew ? "Team added" : "Team updated");
+      router.back();
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Failed", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const remove = async () => {
+    setSaving(true);
+    try {
+      await api(`/teams/${id}`, { method: "DELETE" });
+      qc.invalidateQueries({ queryKey: ["teams"] });
+      toast("Team deleted");
       router.back();
     } catch (e) {
       toast(e instanceof Error ? e.message : "Failed", "error");
@@ -64,7 +84,7 @@ export default function EditTeam() {
 
   return (
     <View style={styles.root}>
-      <AdminHeader title="EDIT TEAM" />
+      <AdminHeader title={isNew ? "NEW TEAM" : "EDIT TEAM"} />
       <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ padding: spacing.lg, gap: spacing.md, paddingBottom: insets.bottom + spacing.lg }}>
         <View style={styles.preview}>
           <TeamLogo team={draft} size={88} />
@@ -86,7 +106,8 @@ export default function EditTeam() {
             </Pressable>
           ))}
         </View>
-        <Button testID="save-team-button" title="Save team" onPress={save} loading={saving} style={{ marginTop: spacing.sm }} />
+        <Button testID="save-team-button" title={isNew ? "Add team" : "Save team"} onPress={save} loading={saving} style={{ marginTop: spacing.sm }} />
+        {!isNew && <Button testID="delete-team-button" title="Delete team" variant="danger" onPress={remove} disabled={saving} />}
       </KeyboardAwareScrollView>
     </View>
   );

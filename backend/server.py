@@ -5,6 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from pymongo import ReturnDocument
 import os
+import json
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr, BeforeValidator, ConfigDict
@@ -22,6 +23,7 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALG = "HS256"
 REGULAR_ROUNDS = 14
+MAX_TEAMS = 16
 
 app = FastAPI()
 
@@ -206,30 +208,8 @@ def oid(s: str) -> ObjectId:
 
 
 # ---------------- Seeding ----------------
-DEFAULT_TEAMS = [
-    ("Northside Lions", "NSL", "#C8102E", "#FFD100", "paw"),
-    ("Harbour Sharks", "HBS", "#0072CE", "#FFFFFF", "fish"),
-    ("Valley Eagles", "VLE", "#1B5E20", "#FFC72C", "shield"),
-    ("Coastal Thunder", "CST", "#F2A900", "#1A1A1A", "flash"),
-    ("Metro Wolves", "MTW", "#5B6770", "#E35205", "moon"),
-    ("Ridge Rockets", "RDR", "#E35205", "#FFFFFF", "rocket"),
-    ("Riverside Royals", "RVR", "#6A1B9A", "#FFD100", "diamond"),
-    ("Summit Stallions", "SMS", "#00843D", "#FFFFFF", "trophy"),
-]
-
-
-def round_robin(ids: List[str]) -> List[List[tuple]]:
-    n = len(ids)
-    arr = ids[:]
-    rounds = []
-    for r in range(n - 1):
-        pairs = []
-        for i in range(n // 2):
-            a, b = arr[i], arr[n - 1 - i]
-            pairs.append((a, b) if (r + i) % 2 == 0 else (b, a))
-        rounds.append(pairs)
-        arr = [arr[0]] + [arr[-1]] + arr[1:-1]
-    return rounds
+# Real 2026-27 Metro Pennant Weekend Premier Reserve draw (Bowlslink), rounds 1-14 with UTC kick-offs.
+FIXTURE = json.loads((ROOT_DIR / "fixture.json").read_text())
 
 
 async def seed():
@@ -245,23 +225,15 @@ async def seed():
         await db.users.update_one({"_id": existing["_id"]},
                                   {"$set": {"password_hash": hash_pw(os.environ['ADMIN_PASSWORD']), "role": "admin"}})
     if await db.teams.count_documents({}) == 0:
-        await db.teams.insert_many([Team(name=n, short=s, color=c, secondary=s2, icon=i).to_mongo()
-                                    for n, s, c, s2, i in DEFAULT_TEAMS])
+        await db.teams.insert_many([Team(**t).to_mongo() for t in FIXTURE["teams"]])
     if await db.rounds.count_documents({}) == 0:
-        team_ids = [str(t["_id"]) async for t in db.teams.find().sort("_id", 1)]
-        rr = round_robin(team_ids)
-        now = datetime.now(timezone.utc)
-        first_sat = (now + timedelta(days=(5 - now.weekday()) % 7 or 7)).replace(hour=5, minute=0, second=0, microsecond=0)
-        for r in range(REGULAR_ROUNDS):
-            num = r + 1
+        ids = {t["name"]: str(t["_id"]) async for t in db.teams.find()}
+        for rnd in FIXTURE["rounds"][:REGULAR_ROUNDS]:
+            num = rnd["number"]
             await db.rounds.insert_one(Round(number=num, name=f"Round {num}").to_mongo())
-            pairs = rr[r % len(rr)]
-            if r >= len(rr):
-                pairs = [(b, a) for a, b in pairs]
-            day = first_sat + timedelta(weeks=r)
-            await db.matches.insert_many([Match(round_number=num, order=i, home_team_id=a, away_team_id=b,
-                                                kickoff=(day + timedelta(hours=2 * i)).isoformat()).to_mongo()
-                                          for i, (a, b) in enumerate(pairs)])
+            await db.matches.insert_many([Match(round_number=num, order=i, home_team_id=ids[m["home"]],
+                                                away_team_id=ids[m["away"]], kickoff=m["kickoff"]).to_mongo()
+                                          for i, m in enumerate(rnd["matches"])])
 
 
 @app.on_event("startup")
@@ -298,6 +270,29 @@ async def me(user: User = Depends(current_user)):
 @api_router.get("/teams")
 async def list_teams():
     return [Team.from_mongo(t).model_dump() async for t in db.teams.find().sort("_id", 1)]
+
+
+@api_router.post("/teams")
+async def create_team(body: TeamUpdate, _: User = Depends(admin_user)):
+    if await db.teams.count_documents({}) >= MAX_TEAMS:
+        raise HTTPException(400, f"Maximum of {MAX_TEAMS} teams reached")
+    if not body.name or not body.name.strip() or not body.short or not body.short.strip():
+        raise HTTPException(400, "Name and short code are required")
+    t = Team(name=body.name.strip(), short=body.short.strip().upper()[:4], color=body.color or "#0072CE",
+             secondary=body.secondary or "#FFFFFF", icon=body.icon or "shield")
+    res = await db.teams.insert_one(t.to_mongo())
+    t.id = str(res.inserted_id)
+    return t.model_dump()
+
+
+@api_router.delete("/teams/{team_id}")
+async def delete_team(team_id: str, _: User = Depends(admin_user)):
+    if await db.matches.find_one({"$or": [{"home_team_id": team_id}, {"away_team_id": team_id}]}):
+        raise HTTPException(400, "Team is used in fixtures. Remove its matches first")
+    res = await db.teams.delete_one({"_id": oid(team_id)})
+    if not res.deleted_count:
+        raise HTTPException(404, "Team not found")
+    return {"deleted": True}
 
 
 @api_router.put("/teams/{team_id}")
