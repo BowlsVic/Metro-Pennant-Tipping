@@ -23,7 +23,7 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALG = "HS256"
 REGULAR_ROUNDS = 14
-MAX_TEAMS = 16
+MAX_TEAMS = 24
 
 app = FastAPI()
 
@@ -69,6 +69,7 @@ class Team(BaseDocument):
     color: str
     secondary: str
     icon: str
+    sort: int = 0
 
 
 class Round(BaseDocument):
@@ -85,6 +86,7 @@ class Match(BaseDocument):
     away_team_id: str
     winner_team_id: Optional[str] = None  # team id or "draw"
     kickoff: Optional[str] = None  # ISO 8601 UTC
+    group: Optional[str] = None  # division label, e.g. "Premier Division"
 
     def started(self) -> bool:
         if not self.kickoff:
@@ -208,7 +210,7 @@ def oid(s: str) -> ObjectId:
 
 
 # ---------------- Seeding ----------------
-# Real 2026-27 Metro Pennant Weekend Premier Reserve draw (Bowlslink), rounds 1-14 with UTC kick-offs.
+# Real 2026-27 Metro Pennant Weekend draws (Bowlslink): Premier Division first, then Premier Reserve.
 FIXTURE = json.loads((ROOT_DIR / "fixture.json").read_text())
 
 
@@ -225,15 +227,18 @@ async def seed():
         await db.users.update_one({"_id": existing["_id"]},
                                   {"$set": {"password_hash": hash_pw(os.environ['ADMIN_PASSWORD']), "role": "admin"}})
     if await db.teams.count_documents({}) == 0:
-        await db.teams.insert_many([Team(**t).to_mongo() for t in FIXTURE["teams"]])
+        teams = [t for c in FIXTURE["competitions"] for t in c["teams"]]
+        await db.teams.insert_many([Team(**t, sort=i).to_mongo() for i, t in enumerate(teams)])
     if await db.rounds.count_documents({}) == 0:
         ids = {t["name"]: str(t["_id"]) async for t in db.teams.find()}
-        for rnd in FIXTURE["rounds"][:REGULAR_ROUNDS]:
-            num = rnd["number"]
+        numbers = sorted({r["number"] for c in FIXTURE["competitions"] for r in c["rounds"]})[:REGULAR_ROUNDS]
+        for num in numbers:
             await db.rounds.insert_one(Round(number=num, name=f"Round {num}").to_mongo())
+            matches = [(c["group"], m) for c in FIXTURE["competitions"] for r in c["rounds"] if r["number"] == num
+                       for m in r["matches"]]
             await db.matches.insert_many([Match(round_number=num, order=i, home_team_id=ids[m["home"]],
-                                                away_team_id=ids[m["away"]], kickoff=m["kickoff"]).to_mongo()
-                                          for i, m in enumerate(rnd["matches"])])
+                                                away_team_id=ids[m["away"]], kickoff=m["kickoff"], group=g).to_mongo()
+                                          for i, (g, m) in enumerate(matches)])
 
 
 @app.on_event("startup")
@@ -269,7 +274,7 @@ async def me(user: User = Depends(current_user)):
 # ---------------- Teams ----------------
 @api_router.get("/teams")
 async def list_teams():
-    return [Team.from_mongo(t).model_dump() async for t in db.teams.find().sort("_id", 1)]
+    return [Team.from_mongo(t).model_dump() async for t in db.teams.find().sort([("sort", 1), ("_id", 1)])]
 
 
 @api_router.post("/teams")
@@ -278,8 +283,9 @@ async def create_team(body: TeamUpdate, _: User = Depends(admin_user)):
         raise HTTPException(400, f"Maximum of {MAX_TEAMS} teams reached")
     if not body.name or not body.name.strip() or not body.short or not body.short.strip():
         raise HTTPException(400, "Name and short code are required")
+    last = await db.teams.find_one(sort=[("sort", -1)])
     t = Team(name=body.name.strip(), short=body.short.strip().upper()[:4], color=body.color or "#0072CE",
-             secondary=body.secondary or "#FFFFFF", icon=body.icon or "shield")
+             secondary=body.secondary or "#FFFFFF", icon=body.icon or "shield", sort=(last or {}).get("sort", 0) + 1)
     res = await db.teams.insert_one(t.to_mongo())
     t.id = str(res.inserted_id)
     return t.model_dump()

@@ -70,6 +70,7 @@ export default function RoundTips() {
           {revealed.length > 0 && (
             <>
               <Text style={styles.section}>PLAYER BY PLAYER</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
               <View style={styles.table}>
                 <View style={[styles.tr, styles.thead]}>
                   <Text style={[styles.th, styles.nameCol]}>PLAYER</Text>
@@ -103,6 +104,7 @@ export default function RoundTips() {
                   </View>
                 ))}
               </View>
+              </ScrollView>
             </>
           )}
         </ScrollView>
@@ -124,13 +126,13 @@ const useStyles = makeStyles((c) => ({
   winner: { color: c.success },
   splitCount: { color: c.onSurface, fontFamily: fonts.display, fontSize: 22 },
   bar: { flexDirection: "row", height: 8, borderRadius: 4, overflow: "hidden", backgroundColor: c.surfaceTertiary },
-  table: { backgroundColor: c.surfaceSecondary, borderRadius: radius.lg, borderWidth: 1, borderColor: c.border, overflow: "hidden" },
+  table: { flex: 1, backgroundColor: c.surfaceSecondary, borderRadius: radius.lg, borderWidth: 1, borderColor: c.border, overflow: "hidden" },
   tr: { flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.md, minHeight: 48, borderTopWidth: 1, borderTopColor: c.divider },
   thead: { borderTopWidth: 0, minHeight: 36, backgroundColor: c.surfaceTertiary },
   me: { backgroundColor: c.brandTertiary },
   th: { color: c.muted, fontFamily: fonts.display, fontSize: 12, letterSpacing: 1 },
   td: { color: c.onSurface, fontFamily: fonts.displaySemi, fontSize: 15 },
-  nameCol: { flex: 1, paddingRight: spacing.sm },
+  nameCol: { flex: 1, minWidth: 120, paddingRight: spacing.sm },
   ptsCol: { width: 28, textAlign: "right" },
   cell: { width: 36, alignItems: "center", justifyContent: "center" },
   tipDot: { borderRadius: 16, borderWidth: 2, borderColor: "transparent", padding: 1 },

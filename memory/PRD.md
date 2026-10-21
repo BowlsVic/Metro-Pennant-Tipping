@@ -31,6 +31,13 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Note: club logos from Bowlslink not used (Middle Park's image is access-restricted); could add uploaded logos via object storage later
 - Testing caution: backend tests mutate the live season data; always reset rounds/matches/tips after test runs
 
+## Iteration 4 (2026-06)
+- Added 2026-27 Metro Pennant Weekend Premier Division (Bowlslink competition ecc00663-…): 8 more clubs (Lalor, Moonee Valley, MCC, Bundoora, Deer Park, Altona, Yarraville Footscray, Essendon) listed first, then Premier Reserve clubs
+- Each round now has 8 matches: Premier Division (orders 0–3) then Premier Reserve (4–7); Match.group label shown as section headings on Tips screen
+- fixture.json now has "competitions" list; Team.sort controls list order; MAX_TEAMS raised to 24
+- Everyone's tips table scrolls horizontally for 8 matches
+- Perfect-round bonus now means all 8 matches correct
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

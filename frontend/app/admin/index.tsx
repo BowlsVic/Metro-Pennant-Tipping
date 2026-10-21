@@ -92,8 +92,8 @@ export default function AdminHome() {
           </>
         ) : (
           <>
-            {(teams.data?.length ?? 0) < 16 && (
-              <Button testID="add-team-button" title={`Add team (${teams.data?.length ?? 0}/16)`} variant="ghost" onPress={() => router.push("/admin/team/new")} style={{ marginBottom: spacing.sm }} />
+            {(teams.data?.length ?? 0) < 24 && (
+              <Button testID="add-team-button" title={`Add team (${teams.data?.length ?? 0}/24)`} variant="ghost" onPress={() => router.push("/admin/team/new")} style={{ marginBottom: spacing.sm }} />
             )}
             {teams.data?.map((t) => (
             <Pressable

@@ -131,6 +131,9 @@ export default function TipsScreen() {
             ) : (
               r.matches.map((m, i) => (
                 <Animated.View key={m.id} entering={FadeInDown.delay(i * 60)}>
+                  {m.group && m.group !== r.matches[i - 1]?.group && (
+                    <Text testID={`group-heading-${i}`} style={[styles.groupHead, i > 0 && styles.groupHeadSpaced]}>{m.group.toUpperCase()}</Text>
+                  )}
                   <MatchCard
                     match={m}
                     home={teams[m.home_team_id]}
@@ -220,6 +223,8 @@ const useStyles = makeStyles((c) => ({
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   list: { padding: spacing.lg, gap: spacing.md },
   roundHead: { marginBottom: spacing.xs, flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  groupHead: { color: c.onSurfaceTertiary, fontFamily: fonts.display, fontSize: 14, letterSpacing: 1.2, marginBottom: spacing.sm },
+  groupHeadSpaced: { marginTop: spacing.md },
   allBtn: { flexDirection: "row", alignItems: "center", gap: spacing.xs, height: 36, paddingHorizontal: spacing.md, borderRadius: radius.pill, backgroundColor: c.brandTertiary },
   allBtnText: { color: c.onBrandTertiary, fontFamily: fonts.displaySemi, fontSize: 15 },
   kickRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, paddingHorizontal: spacing.sm, paddingTop: spacing.xs },

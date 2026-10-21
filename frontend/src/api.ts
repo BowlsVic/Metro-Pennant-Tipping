@@ -11,7 +11,7 @@ export type RoundSummary = {
 };
 export type MatchItem = {
   id: string; round_number: number; order: number; home_team_id: string; away_team_id: string;
-  winner_team_id: string | null; kickoff: string | null; started: boolean;
+  winner_team_id: string | null; kickoff: string | null; started: boolean; group: string | null;
   my_tip: string | null; locked: boolean; correct: boolean | null;
 };
 export type AllTips = {
