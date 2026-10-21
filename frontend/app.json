@@ -9,6 +9,9 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Choose club logos from your photos"
+      },
       "bundleIdentifier": "com.emergent.footytips.n4o11s"
     },
     "android": {
@@ -39,7 +42,13 @@
       "expo-secure-store",
       "expo-web-browser",
       "expo-status-bar",
-      "@react-native-vector-icons/ionicons"
+      "@react-native-vector-icons/ionicons",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Choose club logos from your photos"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

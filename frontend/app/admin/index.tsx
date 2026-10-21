@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { api } from "@/src/api";
 import { AdminHeader } from "@/src/components/AdminHeader";
+import { BowlslinkCard } from "@/src/components/BowlslinkCard";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { useToast } from "@/src/components/Toast";
 import { Button } from "@/src/components/ui";
@@ -57,6 +58,7 @@ export default function AdminHome() {
       <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ padding: spacing.lg, gap: spacing.sm, paddingBottom: insets.bottom + spacing.lg }}>
         {tab === "rounds" ? (
           <>
+            <BowlslinkCard />
             <View style={styles.addBox}>
               <Text style={styles.boxTitle}>Add a finals round</Text>
               <TextInput

@@ -38,6 +38,12 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Everyone's tips table scrolls horizontally for 8 matches
 - Perfect-round bonus now means all 8 matches correct
 
+## Iteration 5 (2026-06)
+- Auto results sync from Bowlslink: matches/teams store Bowlslink ext_id; background task every 15 min + admin "Sync now"; only completed results applied (home/away/draw); status in db.meta
+- Real club logos: Emergent Object Storage; admin upload (expo-image-picker + uploadForm, permission flow), remove, and "Import logos" from Bowlslink (all 16 imported). Public GET /api/teams/{id}/logo
+- Division filter chips (All / Premier Division / Premier Reserve) on Tips screen
+- Tested: 16/16 new backend tests + UI flows. Live data untouched (0 tips, 0 results)
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard

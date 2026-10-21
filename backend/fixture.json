@@ -9,56 +9,64 @@
      "short": "LAL",
      "color": "#C8102E",
      "secondary": "#FFFFFF",
-     "icon": "shield"
+     "icon": "shield",
+     "ext_id": "0cb4752b-3324-4ddf-980e-8edf642b730e"
     },
     {
      "name": "Moonee Valley",
      "short": "MNV",
      "color": "#002B5C",
      "secondary": "#FFD100",
-     "icon": "moon"
+     "icon": "moon",
+     "ext_id": "11488fe1-1708-4535-b99d-416561dfd66b"
     },
     {
      "name": "MCC",
      "short": "MCC",
      "color": "#002B5C",
      "secondary": "#C8102E",
-     "icon": "trophy"
+     "icon": "trophy",
+     "ext_id": "37aa3b70-9fd6-4a56-be3e-5e8cf00b05e1"
     },
     {
      "name": "Bundoora",
      "short": "BUN",
      "color": "#00843D",
      "secondary": "#FFFFFF",
-     "icon": "leaf"
+     "icon": "leaf",
+     "ext_id": "3f46a16c-5ced-4d8e-9252-1a449423b584"
     },
     {
      "name": "Deer Park",
      "short": "DPK",
      "color": "#6A1B9A",
      "secondary": "#FFD100",
-     "icon": "paw"
+     "icon": "paw",
+     "ext_id": "4328ce6c-d935-4fbf-a9d4-c2d9626e255c"
     },
     {
      "name": "Altona",
      "short": "ALT",
      "color": "#0072CE",
      "secondary": "#FFD100",
-     "icon": "planet"
+     "icon": "planet",
+     "ext_id": "567e7c1f-f68e-4a08-9cae-52c273dc058b"
     },
     {
      "name": "Yarraville Footscray",
      "short": "YVF",
      "color": "#1A1A1A",
      "secondary": "#C8102E",
-     "icon": "flame"
+     "icon": "flame",
+     "ext_id": "5be889fa-c020-4666-a50f-0bd7020b9f21"
     },
     {
      "name": "Essendon",
      "short": "ESS",
      "color": "#C8102E",
      "secondary": "#1A1A1A",
-     "icon": "rocket"
+     "icon": "rocket",
+     "ext_id": "a21918c8-5d5a-4fe0-9f97-e9425c3900c7"
     }
    ],
    "rounds": [
@@ -68,22 +76,26 @@
       {
        "home": "Bundoora",
        "away": "MCC",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "1d6ac17f-e82f-4a69-8ab1-b150a11d0684"
       },
       {
        "home": "Lalor",
        "away": "Altona",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "40207821-341d-4cb4-99e7-7b4b969a73f0"
       },
       {
        "home": "Deer Park",
        "away": "Essendon",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "d76a7ea5-5cdf-494c-92ab-b896bd950a3f"
       },
       {
        "home": "Moonee Valley",
        "away": "Yarraville Footscray",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "ea76ee1e-3a1c-4261-b41f-34b43fe01431"
       }
      ]
     },
@@ -93,22 +105,26 @@
       {
        "home": "Essendon",
        "away": "Bundoora",
-       "kickoff": "2026-10-24T02:00:00+00:00"
+       "kickoff": "2026-10-24T02:00:00+00:00",
+       "ext_id": "3546b773-4fc7-4ae9-a5cc-613fe62114d5"
       },
       {
        "home": "Altona",
        "away": "Deer Park",
-       "kickoff": "2026-10-24T03:00:00+00:00"
+       "kickoff": "2026-10-24T03:00:00+00:00",
+       "ext_id": "d0fde846-3c71-477e-9b17-7de9978cd0c2"
       },
       {
        "home": "MCC",
        "away": "Moonee Valley",
-       "kickoff": "2026-10-24T04:00:00+00:00"
+       "kickoff": "2026-10-24T04:00:00+00:00",
+       "ext_id": "517de45b-ea02-45fe-a9a8-c50ccdc39ecb"
       },
       {
        "home": "Yarraville Footscray",
        "away": "Lalor",
-       "kickoff": "2026-10-24T04:30:00+00:00"
+       "kickoff": "2026-10-24T04:30:00+00:00",
+       "ext_id": "88396921-fff5-4f28-a891-2edba5106059"
       }
      ]
     },
@@ -118,22 +134,26 @@
       {
        "home": "Moonee Valley",
        "away": "Altona",
-       "kickoff": "2026-10-30T08:00:00+00:00"
+       "kickoff": "2026-10-30T08:00:00+00:00",
+       "ext_id": "d97e7ce5-7925-4147-a029-efb29446616f"
       },
       {
        "home": "Lalor",
        "away": "Essendon",
-       "kickoff": "2026-10-30T08:00:00+00:00"
+       "kickoff": "2026-10-30T08:00:00+00:00",
+       "ext_id": "e3e510b0-1821-4644-93ea-9f994a99beeb"
       },
       {
        "home": "Bundoora",
        "away": "Yarraville Footscray",
-       "kickoff": "2026-10-31T02:00:00+00:00"
+       "kickoff": "2026-10-31T02:00:00+00:00",
+       "ext_id": "b72f1ccd-dc8b-4f05-a255-7faa03f08e9b"
       },
       {
        "home": "MCC",
        "away": "Deer Park",
-       "kickoff": "2026-10-31T06:00:00+00:00"
+       "kickoff": "2026-10-31T06:00:00+00:00",
+       "ext_id": "978937b9-be4e-4345-b75e-c4f53f8b9518"
       }
      ]
     },
@@ -143,22 +163,26 @@
       {
        "home": "Yarraville Footscray",
        "away": "Altona",
-       "kickoff": "2026-11-06T08:00:00+00:00"
+       "kickoff": "2026-11-06T08:00:00+00:00",
+       "ext_id": "6851837b-3fa2-437f-93df-bd9a7ccf4b43"
       },
       {
        "home": "Moonee Valley",
        "away": "Essendon",
-       "kickoff": "2026-11-06T08:00:00+00:00"
+       "kickoff": "2026-11-06T08:00:00+00:00",
+       "ext_id": "7fd18837-8fe5-4f2f-85d3-e7bcb3785cd0"
       },
       {
        "home": "MCC",
        "away": "Lalor",
-       "kickoff": "2026-11-07T02:00:00+00:00"
+       "kickoff": "2026-11-07T02:00:00+00:00",
+       "ext_id": "64934d64-7deb-4f70-b47f-f1719d2952f9"
       },
       {
        "home": "Bundoora",
        "away": "Deer Park",
-       "kickoff": "2026-11-07T02:00:00+00:00"
+       "kickoff": "2026-11-07T02:00:00+00:00",
+       "ext_id": "81491228-f0e7-4505-8a28-971801fb997d"
       }
      ]
     },
@@ -168,22 +192,26 @@
       {
        "home": "Lalor",
        "away": "Moonee Valley",
-       "kickoff": "2026-11-14T02:00:00+00:00"
+       "kickoff": "2026-11-14T02:00:00+00:00",
+       "ext_id": "456ad381-d187-42d8-a9f7-311ca61643f8"
       },
       {
        "home": "Essendon",
        "away": "MCC",
-       "kickoff": "2026-11-14T02:00:00+00:00"
+       "kickoff": "2026-11-14T02:00:00+00:00",
+       "ext_id": "9f8735d5-dbf4-4984-ad3c-d42c74878613"
       },
       {
        "home": "Altona",
        "away": "Bundoora",
-       "kickoff": "2026-11-14T03:00:00+00:00"
+       "kickoff": "2026-11-14T03:00:00+00:00",
+       "ext_id": "0c0d58ee-c6bb-44e4-ba87-ae5d934844c7"
       },
       {
        "home": "Deer Park",
        "away": "Yarraville Footscray",
-       "kickoff": "2026-11-14T06:00:00+00:00"
+       "kickoff": "2026-11-14T06:00:00+00:00",
+       "ext_id": "8c48152b-f3db-4b06-b54d-f454796ee27f"
       }
      ]
     },
@@ -193,22 +221,26 @@
       {
        "home": "Altona",
        "away": "MCC",
-       "kickoff": "2026-11-20T08:00:00+00:00"
+       "kickoff": "2026-11-20T08:00:00+00:00",
+       "ext_id": "d24a10ba-ab0d-4550-8418-1387cf7b07d0"
       },
       {
        "home": "Moonee Valley",
        "away": "Deer Park",
-       "kickoff": "2026-11-20T08:00:00+00:00"
+       "kickoff": "2026-11-20T08:00:00+00:00",
+       "ext_id": "e99614df-b21b-4985-8fa6-3b14d2c91867"
       },
       {
        "home": "Lalor",
        "away": "Bundoora",
-       "kickoff": "2026-11-21T02:00:00+00:00"
+       "kickoff": "2026-11-21T02:00:00+00:00",
+       "ext_id": "a1159b54-2d26-4d7a-98af-cc3516a9f941"
       },
       {
        "home": "Yarraville Footscray",
        "away": "Essendon",
-       "kickoff": "2026-11-21T04:30:00+00:00"
+       "kickoff": "2026-11-21T04:30:00+00:00",
+       "ext_id": "b2265a05-9dfa-4bea-bf43-4d563ab9b9f1"
       }
      ]
     },
@@ -218,22 +250,26 @@
       {
        "home": "Bundoora",
        "away": "Moonee Valley",
-       "kickoff": "2026-11-27T08:00:00+00:00"
+       "kickoff": "2026-11-27T08:00:00+00:00",
+       "ext_id": "23c109fa-2d73-4b5c-bb6e-8f778d75722e"
       },
       {
        "home": "Essendon",
        "away": "Altona",
-       "kickoff": "2026-11-27T08:00:00+00:00"
+       "kickoff": "2026-11-27T08:00:00+00:00",
+       "ext_id": "b1b0c82b-ace1-4ad6-b58e-768976f8e1c5"
       },
       {
        "home": "MCC",
        "away": "Yarraville Footscray",
-       "kickoff": "2026-11-28T02:00:00+00:00"
+       "kickoff": "2026-11-28T02:00:00+00:00",
+       "ext_id": "11145c22-983e-4c45-8df4-252978376bb3"
       },
       {
        "home": "Deer Park",
        "away": "Lalor",
-       "kickoff": "2026-11-28T06:00:00+00:00"
+       "kickoff": "2026-11-28T06:00:00+00:00",
+       "ext_id": "e9c449ea-c509-460d-991a-6f40276ebe07"
       }
      ]
     },
@@ -243,22 +279,26 @@
       {
        "home": "MCC",
        "away": "Bundoora",
-       "kickoff": "2026-12-04T08:00:00+00:00"
+       "kickoff": "2026-12-04T08:00:00+00:00",
+       "ext_id": "5ec49b35-8167-4fe5-ab1c-bd285b37c207"
       },
       {
        "home": "Essendon",
        "away": "Deer Park",
-       "kickoff": "2026-12-04T08:00:00+00:00"
+       "kickoff": "2026-12-04T08:00:00+00:00",
+       "ext_id": "6bcc48f0-19ae-43c2-96a1-55895a935a0f"
       },
       {
        "home": "Altona",
        "away": "Lalor",
-       "kickoff": "2026-12-05T03:00:00+00:00"
+       "kickoff": "2026-12-05T03:00:00+00:00",
+       "ext_id": "28cdfb9c-2575-4708-adc7-5d9d0a1a2456"
       },
       {
        "home": "Yarraville Footscray",
        "away": "Moonee Valley",
-       "kickoff": "2026-12-05T04:30:00+00:00"
+       "kickoff": "2026-12-05T04:30:00+00:00",
+       "ext_id": "844a118e-34c6-42d4-9f0a-f42ffd135b33"
       }
      ]
     },
@@ -268,22 +308,26 @@
       {
        "home": "Moonee Valley",
        "away": "MCC",
-       "kickoff": "2026-12-11T08:00:00+00:00"
+       "kickoff": "2026-12-11T08:00:00+00:00",
+       "ext_id": "bba07579-8baf-473d-a5c7-215cd91522d5"
       },
       {
        "home": "Bundoora",
        "away": "Essendon",
-       "kickoff": "2026-12-12T02:00:00+00:00"
+       "kickoff": "2026-12-12T02:00:00+00:00",
+       "ext_id": "c6017a98-c615-4c14-8c31-1966d8d2193e"
       },
       {
        "home": "Lalor",
        "away": "Yarraville Footscray",
-       "kickoff": "2026-12-12T02:00:00+00:00"
+       "kickoff": "2026-12-12T02:00:00+00:00",
+       "ext_id": "e1e4bbd1-e959-464f-ab66-668eb9a9ff4a"
       },
       {
        "home": "Deer Park",
        "away": "Altona",
-       "kickoff": "2026-12-12T06:00:00+00:00"
+       "kickoff": "2026-12-12T06:00:00+00:00",
+       "ext_id": "e8e9bec6-3422-4a6e-9632-bc2ca7dfbb41"
       }
      ]
     },
@@ -293,22 +337,26 @@
       {
        "home": "Essendon",
        "away": "Lalor",
-       "kickoff": "2026-12-18T08:00:00+00:00"
+       "kickoff": "2026-12-18T08:00:00+00:00",
+       "ext_id": "6706c545-a21b-40f3-baca-9de74880e97c"
       },
       {
        "home": "Altona",
        "away": "Moonee Valley",
-       "kickoff": "2026-12-19T03:00:00+00:00"
+       "kickoff": "2026-12-19T03:00:00+00:00",
+       "ext_id": "9010d585-a7ef-459f-a92c-28b37f4ea5c9"
       },
       {
        "home": "Yarraville Footscray",
        "away": "Bundoora",
-       "kickoff": "2026-12-19T04:30:00+00:00"
+       "kickoff": "2026-12-19T04:30:00+00:00",
+       "ext_id": "f472164a-cefc-4ac2-8eb9-e8a99e850917"
       },
       {
        "home": "Deer Park",
        "away": "MCC",
-       "kickoff": "2026-12-19T06:00:00+00:00"
+       "kickoff": "2026-12-19T06:00:00+00:00",
+       "ext_id": "a207d895-5c4a-4483-99ff-402bdf6ea65f"
       }
      ]
     },
@@ -318,22 +366,26 @@
       {
        "home": "Lalor",
        "away": "MCC",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "5a26d6a8-8cb1-442e-a51f-3c691a52a3b8"
       },
       {
        "home": "Essendon",
        "away": "Moonee Valley",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "623cc780-7005-48a4-9865-0d0d25a58104"
       },
       {
        "home": "Altona",
        "away": "Yarraville Footscray",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "ad48aa6d-1d27-4e0c-a38a-85b5fe54782e"
       },
       {
        "home": "Deer Park",
        "away": "Bundoora",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "f2b6b679-000e-44fd-98e4-71b1158f6a28"
       }
      ]
     },
@@ -343,22 +395,26 @@
       {
        "home": "MCC",
        "away": "Essendon",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "05aee007-699d-469d-acca-4f69eb82c7f7"
       },
       {
        "home": "Bundoora",
        "away": "Altona",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "0a4eebf8-d58d-4a73-b76e-34dbd8215bef"
       },
       {
        "home": "Moonee Valley",
        "away": "Lalor",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "717f46b1-478d-4465-bf77-1e5a7e6a51fa"
       },
       {
        "home": "Yarraville Footscray",
        "away": "Deer Park",
-       "kickoff": "2027-01-23T04:30:00+00:00"
+       "kickoff": "2027-01-23T04:30:00+00:00",
+       "ext_id": "fb49c537-fd41-4196-8c7c-e886814fc44f"
       }
      ]
     },
@@ -368,22 +424,26 @@
       {
        "home": "Deer Park",
        "away": "Moonee Valley",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "1cb26633-0ef1-4652-b44a-8a978f2455b3"
       },
       {
        "home": "MCC",
        "away": "Altona",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "a000ff2c-3dd2-4da6-a9a2-31af07957605"
       },
       {
        "home": "Essendon",
        "away": "Yarraville Footscray",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "ad3cf6d3-c326-44cd-8158-4028a7e7e54c"
       },
       {
        "home": "Bundoora",
        "away": "Lalor",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "be268bfd-7ed1-40af-8882-4c0ddd5b7f83"
       }
      ]
     },
@@ -393,26 +453,31 @@
       {
        "home": "Lalor",
        "away": "Deer Park",
-       "kickoff": "2027-01-30T02:00:00+00:00"
+       "kickoff": "2027-01-30T02:00:00+00:00",
+       "ext_id": "27d7cb3f-df35-4415-a82b-b53ecbc52013"
       },
       {
        "home": "Moonee Valley",
        "away": "Bundoora",
-       "kickoff": "2027-01-30T02:00:00+00:00"
+       "kickoff": "2027-01-30T02:00:00+00:00",
+       "ext_id": "3fbe5ae9-b322-467f-9bed-c907449902f0"
       },
       {
        "home": "Altona",
        "away": "Essendon",
-       "kickoff": "2027-01-30T03:00:00+00:00"
+       "kickoff": "2027-01-30T03:00:00+00:00",
+       "ext_id": "4b60e5c0-72c5-4c14-b724-6e9977f94538"
       },
       {
        "home": "Yarraville Footscray",
        "away": "MCC",
-       "kickoff": "2027-01-30T04:30:00+00:00"
+       "kickoff": "2027-01-30T04:30:00+00:00",
+       "ext_id": "bb0432aa-4c59-4f9b-81e4-179d03ae56aa"
       }
      ]
     }
-   ]
+   ],
+   "id": "ecc00663-ab13-4e15-95ae-69b7d00651cf"
   },
   {
    "name": "2026-27 Metro Pennant Weekend Premier Reserve",
@@ -423,56 +488,64 @@
      "short": "MEL",
      "color": "#002B5C",
      "secondary": "#FFFFFF",
-     "icon": "star"
+     "icon": "star",
+     "ext_id": "111a818d-1852-47b2-ad0e-e5d5d8bb1075"
     },
     {
      "name": "Glenroy",
      "short": "GLN",
      "color": "#C8102E",
      "secondary": "#FFD100",
-     "icon": "flame"
+     "icon": "flame",
+     "ext_id": "1d06fec6-6ba6-4044-9249-71d740454c00"
     },
     {
      "name": "Port Melbourne",
      "short": "PTM",
      "color": "#0072CE",
      "secondary": "#FFFFFF",
-     "icon": "fish"
+     "icon": "fish",
+     "ext_id": "4462113d-a0f2-4479-a4e8-85e605e26e65"
     },
     {
      "name": "Heathmont",
      "short": "HTH",
      "color": "#00843D",
      "secondary": "#FFD100",
-     "icon": "leaf"
+     "icon": "leaf",
+     "ext_id": "5b9c8070-771a-4324-953b-920c1e92a880"
     },
     {
      "name": "Lilydale",
      "short": "LIL",
      "color": "#6A1B9A",
      "secondary": "#FFFFFF",
-     "icon": "diamond"
+     "icon": "diamond",
+     "ext_id": "93dace42-f7df-48ff-84cc-c1cf37e5dcc6"
     },
     {
      "name": "Clayton",
      "short": "CLA",
      "color": "#E35205",
      "secondary": "#1A1A1A",
-     "icon": "flash"
+     "icon": "flash",
+     "ext_id": "aba0f8bf-6aa5-416f-9cd2-4351ff7a53e9"
     },
     {
      "name": "Club Sunbury",
      "short": "SUN",
      "color": "#F2A900",
      "secondary": "#1A1A1A",
-     "icon": "sunny"
+     "icon": "sunny",
+     "ext_id": "ad3d5d86-0958-433a-a907-053d055f4843"
     },
     {
      "name": "Middle Park",
      "short": "MPK",
      "color": "#1A1A1A",
      "secondary": "#FFFFFF",
-     "icon": "shield"
+     "icon": "shield",
+     "ext_id": "ff5a7095-f1a1-40b5-9c0f-4ac6ba594f7c"
     }
    ],
    "rounds": [
@@ -482,22 +555,26 @@
       {
        "home": "Port Melbourne",
        "away": "Club Sunbury",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "4ad10212-d938-4226-8f23-312b9716e789"
       },
       {
        "home": "Clayton",
        "away": "Lilydale",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "ce2a62cf-3863-4fdd-8529-2da6d2c79f2a"
       },
       {
        "home": "Middle Park",
        "away": "Glenroy",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "e80fe390-7630-4418-a692-f5a89d98071f"
       },
       {
        "home": "Melbourne",
        "away": "Heathmont",
-       "kickoff": "2026-10-23T08:00:00+00:00"
+       "kickoff": "2026-10-23T08:00:00+00:00",
+       "ext_id": "eb384eb9-edef-41c9-9947-f64cccce46a7"
       }
      ]
     },
@@ -507,22 +584,26 @@
       {
        "home": "Club Sunbury",
        "away": "Middle Park",
-       "kickoff": "2026-10-24T02:00:00+00:00"
+       "kickoff": "2026-10-24T02:00:00+00:00",
+       "ext_id": "4f237f0c-1b7c-467a-a48e-e816d42dbe46"
       },
       {
        "home": "Lilydale",
        "away": "Melbourne",
-       "kickoff": "2026-10-24T02:00:00+00:00"
+       "kickoff": "2026-10-24T02:00:00+00:00",
+       "ext_id": "c9a5b3c8-e235-484c-8253-cb7270375c99"
       },
       {
        "home": "Glenroy",
        "away": "Clayton",
-       "kickoff": "2026-10-24T02:00:00+00:00"
+       "kickoff": "2026-10-24T02:00:00+00:00",
+       "ext_id": "d144793b-b550-4521-b968-18264570e373"
       },
       {
        "home": "Heathmont",
        "away": "Port Melbourne",
-       "kickoff": "2026-10-24T02:00:00+00:00"
+       "kickoff": "2026-10-24T02:00:00+00:00",
+       "ext_id": "f4738edf-7651-4cb1-99d3-f90331fd42b3"
       }
      ]
     },
@@ -532,22 +613,26 @@
       {
        "home": "Port Melbourne",
        "away": "Glenroy",
-       "kickoff": "2026-10-30T08:00:00+00:00"
+       "kickoff": "2026-10-30T08:00:00+00:00",
+       "ext_id": "44511eec-cf03-4d83-8e5b-0bd0019c056a"
       },
       {
        "home": "Melbourne",
        "away": "Club Sunbury",
-       "kickoff": "2026-10-31T02:00:00+00:00"
+       "kickoff": "2026-10-31T02:00:00+00:00",
+       "ext_id": "72baf29d-8331-4722-8ce0-b13334b9d86c"
       },
       {
        "home": "Clayton",
        "away": "Heathmont",
-       "kickoff": "2026-10-31T02:00:00+00:00"
+       "kickoff": "2026-10-31T02:00:00+00:00",
+       "ext_id": "732af6ed-1006-4d9b-b42b-af64486bc32b"
       },
       {
        "home": "Middle Park",
        "away": "Lilydale",
-       "kickoff": "2026-10-31T02:00:00+00:00"
+       "kickoff": "2026-10-31T02:00:00+00:00",
+       "ext_id": "83373b8c-d853-402c-9a91-b60cb5ce7c18"
       }
      ]
     },
@@ -557,22 +642,26 @@
       {
        "home": "Heathmont",
        "away": "Club Sunbury",
-       "kickoff": "2026-11-07T02:00:00+00:00"
+       "kickoff": "2026-11-07T02:00:00+00:00",
+       "ext_id": "37e6b791-2188-421e-a542-543394f47fed"
       },
       {
        "home": "Melbourne",
        "away": "Glenroy",
-       "kickoff": "2026-11-07T02:00:00+00:00"
+       "kickoff": "2026-11-07T02:00:00+00:00",
+       "ext_id": "47e7a1f0-8160-4c62-841a-3abe9cb0a586"
       },
       {
        "home": "Clayton",
        "away": "Middle Park",
-       "kickoff": "2026-11-07T02:00:00+00:00"
+       "kickoff": "2026-11-07T02:00:00+00:00",
+       "ext_id": "5fc8bdd7-7e3f-4533-819b-ef0faa47731e"
       },
       {
        "home": "Lilydale",
        "away": "Port Melbourne",
-       "kickoff": "2026-11-07T02:00:00+00:00"
+       "kickoff": "2026-11-07T02:00:00+00:00",
+       "ext_id": "fec03ee6-9f84-4f6d-b3c0-1c182001157e"
       }
      ]
     },
@@ -582,22 +671,26 @@
       {
        "home": "Middle Park",
        "away": "Heathmont",
-       "kickoff": "2026-11-14T02:00:00+00:00"
+       "kickoff": "2026-11-14T02:00:00+00:00",
+       "ext_id": "57b23469-6ccf-4c11-8337-4019d9c34e4c"
       },
       {
        "home": "Port Melbourne",
        "away": "Melbourne",
-       "kickoff": "2026-11-14T02:00:00+00:00"
+       "kickoff": "2026-11-14T02:00:00+00:00",
+       "ext_id": "e204c4cd-3987-4693-8eba-db095b7b04a4"
       },
       {
        "home": "Glenroy",
        "away": "Lilydale",
-       "kickoff": "2026-11-14T02:00:00+00:00"
+       "kickoff": "2026-11-14T02:00:00+00:00",
+       "ext_id": "e51288fc-5547-44f0-960a-766ed3a56328"
       },
       {
        "home": "Club Sunbury",
        "away": "Clayton",
-       "kickoff": "2026-11-14T02:00:00+00:00"
+       "kickoff": "2026-11-14T02:00:00+00:00",
+       "ext_id": "fda72c3a-7921-4d0b-8c3c-2478a3efda8c"
       }
      ]
     },
@@ -607,22 +700,26 @@
       {
        "home": "Heathmont",
        "away": "Glenroy",
-       "kickoff": "2026-11-20T08:00:00+00:00"
+       "kickoff": "2026-11-20T08:00:00+00:00",
+       "ext_id": "2be8e511-20a7-404e-a5b6-d1c868f896f0"
       },
       {
        "home": "Melbourne",
        "away": "Middle Park",
-       "kickoff": "2026-11-21T02:00:00+00:00"
+       "kickoff": "2026-11-21T02:00:00+00:00",
+       "ext_id": "944a4706-615d-4015-9ece-47ecf7d0d6ce"
       },
       {
        "home": "Club Sunbury",
        "away": "Lilydale",
-       "kickoff": "2026-11-21T02:00:00+00:00"
+       "kickoff": "2026-11-21T02:00:00+00:00",
+       "ext_id": "d8e60abf-3b4e-4ee9-8886-4dd452546f3c"
       },
       {
        "home": "Port Melbourne",
        "away": "Clayton",
-       "kickoff": "2026-11-21T02:00:00+00:00"
+       "kickoff": "2026-11-21T02:00:00+00:00",
+       "ext_id": "ed664ed1-d6d2-4966-b8fc-eea44d2816da"
       }
      ]
     },
@@ -632,22 +729,26 @@
       {
        "home": "Middle Park",
        "away": "Port Melbourne",
-       "kickoff": "2026-11-28T02:00:00+00:00"
+       "kickoff": "2026-11-28T02:00:00+00:00",
+       "ext_id": "34a6c5c0-c837-4e47-8e2a-1034e22eea71"
       },
       {
        "home": "Clayton",
        "away": "Melbourne",
-       "kickoff": "2026-11-28T02:00:00+00:00"
+       "kickoff": "2026-11-28T02:00:00+00:00",
+       "ext_id": "79d94ea7-7ea5-45a2-8424-bce0ca608a97"
       },
       {
        "home": "Lilydale",
        "away": "Heathmont",
-       "kickoff": "2026-11-28T02:00:00+00:00"
+       "kickoff": "2026-11-28T02:00:00+00:00",
+       "ext_id": "d8d44780-b7bb-4e7b-88f9-c06c40800632"
       },
       {
        "home": "Glenroy",
        "away": "Club Sunbury",
-       "kickoff": "2026-11-28T02:00:00+00:00"
+       "kickoff": "2026-11-28T02:00:00+00:00",
+       "ext_id": "ee085e12-1bbc-41ad-a6d8-e775b3c45870"
       }
      ]
     },
@@ -657,22 +758,26 @@
       {
        "home": "Lilydale",
        "away": "Clayton",
-       "kickoff": "2026-12-05T02:00:00+00:00"
+       "kickoff": "2026-12-05T02:00:00+00:00",
+       "ext_id": "1387af77-d9bb-4776-8f75-ef143db0eb6c"
       },
       {
        "home": "Club Sunbury",
        "away": "Port Melbourne",
-       "kickoff": "2026-12-05T02:00:00+00:00"
+       "kickoff": "2026-12-05T02:00:00+00:00",
+       "ext_id": "86f7da63-c334-4978-813e-a38d4d810308"
       },
       {
        "home": "Heathmont",
        "away": "Melbourne",
-       "kickoff": "2026-12-05T02:00:00+00:00"
+       "kickoff": "2026-12-05T02:00:00+00:00",
+       "ext_id": "aa4b65a2-43cd-454f-b367-6f62046862fc"
       },
       {
        "home": "Glenroy",
        "away": "Middle Park",
-       "kickoff": "2026-12-05T02:00:00+00:00"
+       "kickoff": "2026-12-05T02:00:00+00:00",
+       "ext_id": "fd30bdeb-7333-4092-a23e-27af1e2f5ee4"
       }
      ]
     },
@@ -682,22 +787,26 @@
       {
        "home": "Port Melbourne",
        "away": "Heathmont",
-       "kickoff": "2026-12-12T02:00:00+00:00"
+       "kickoff": "2026-12-12T02:00:00+00:00",
+       "ext_id": "679898a0-ead4-4fe9-a570-4114b035a3e4"
       },
       {
        "home": "Melbourne",
        "away": "Lilydale",
-       "kickoff": "2026-12-12T02:00:00+00:00"
+       "kickoff": "2026-12-12T02:00:00+00:00",
+       "ext_id": "90779f1f-5449-414d-a5ed-13767f27d4d3"
       },
       {
        "home": "Clayton",
        "away": "Glenroy",
-       "kickoff": "2026-12-12T02:00:00+00:00"
+       "kickoff": "2026-12-12T02:00:00+00:00",
+       "ext_id": "abcdf706-bedd-4510-b0ab-a46287dc4ac5"
       },
       {
        "home": "Middle Park",
        "away": "Club Sunbury",
-       "kickoff": "2026-12-12T02:00:00+00:00"
+       "kickoff": "2026-12-12T02:00:00+00:00",
+       "ext_id": "ece8d8d5-5aee-4f4f-9827-7faf22b2318b"
       }
      ]
     },
@@ -707,22 +816,26 @@
       {
        "home": "Glenroy",
        "away": "Port Melbourne",
-       "kickoff": "2026-12-18T08:00:00+00:00"
+       "kickoff": "2026-12-18T08:00:00+00:00",
+       "ext_id": "9987b56f-ce56-4dc0-a850-61dddc1d2b7d"
       },
       {
        "home": "Heathmont",
        "away": "Clayton",
-       "kickoff": "2026-12-19T02:00:00+00:00"
+       "kickoff": "2026-12-19T02:00:00+00:00",
+       "ext_id": "6765ba44-5063-41d7-92f4-480667c1c030"
       },
       {
        "home": "Lilydale",
        "away": "Middle Park",
-       "kickoff": "2026-12-19T02:00:00+00:00"
+       "kickoff": "2026-12-19T02:00:00+00:00",
+       "ext_id": "718c6a1c-45ec-4e08-8cba-8e777daa9582"
       },
       {
        "home": "Club Sunbury",
        "away": "Melbourne",
-       "kickoff": "2026-12-19T02:00:00+00:00"
+       "kickoff": "2026-12-19T02:00:00+00:00",
+       "ext_id": "f8ea472f-3fb9-41e6-81bd-22294cbdb886"
       }
      ]
     },
@@ -732,22 +845,26 @@
       {
        "home": "Port Melbourne",
        "away": "Lilydale",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "9b993baf-08b0-4450-886d-daede9b3255c"
       },
       {
        "home": "Club Sunbury",
        "away": "Heathmont",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "a46cf729-7c5f-4564-b66e-72c637349745"
       },
       {
        "home": "Middle Park",
        "away": "Clayton",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "ba49ce3a-e3fa-4c9e-8825-5a50d2a0bc64"
       },
       {
        "home": "Glenroy",
        "away": "Melbourne",
-       "kickoff": "2027-01-22T08:00:00+00:00"
+       "kickoff": "2027-01-22T08:00:00+00:00",
+       "ext_id": "c97d4bce-76f0-4876-9467-4352961ae0a6"
       }
      ]
     },
@@ -757,22 +874,26 @@
       {
        "home": "Lilydale",
        "away": "Glenroy",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "17a9c4f8-5285-46b2-a453-4f9245ce58a5"
       },
       {
        "home": "Heathmont",
        "away": "Middle Park",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "18cbd178-7795-45b6-8f91-5364bb1e2c87"
       },
       {
        "home": "Clayton",
        "away": "Club Sunbury",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "676af71b-a3b4-4145-9147-dadf4aa21037"
       },
       {
        "home": "Melbourne",
        "away": "Port Melbourne",
-       "kickoff": "2027-01-23T02:00:00+00:00"
+       "kickoff": "2027-01-23T02:00:00+00:00",
+       "ext_id": "865ccf80-3153-4150-8f5e-aa3a4c529f7a"
       }
      ]
     },
@@ -782,22 +903,26 @@
       {
        "home": "Lilydale",
        "away": "Club Sunbury",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "1b79bdbc-f09d-4d90-9a13-30dc507c3389"
       },
       {
        "home": "Middle Park",
        "away": "Melbourne",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "1fa4249b-9775-437c-8bf8-8e71b8fce199"
       },
       {
        "home": "Clayton",
        "away": "Port Melbourne",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "abe116df-1aa6-43ed-9c8f-137f42fd636a"
       },
       {
        "home": "Glenroy",
        "away": "Heathmont",
-       "kickoff": "2027-01-29T08:00:00+00:00"
+       "kickoff": "2027-01-29T08:00:00+00:00",
+       "ext_id": "da2a797d-388d-4c92-a94e-f2eb649e39a3"
       }
      ]
     },
@@ -807,26 +932,31 @@
       {
        "home": "Club Sunbury",
        "away": "Glenroy",
-       "kickoff": "2027-01-30T02:00:00+00:00"
+       "kickoff": "2027-01-30T02:00:00+00:00",
+       "ext_id": "233827c5-a647-4795-964e-b7d7b1fb60e4"
       },
       {
        "home": "Heathmont",
        "away": "Lilydale",
-       "kickoff": "2027-01-30T02:00:00+00:00"
+       "kickoff": "2027-01-30T02:00:00+00:00",
+       "ext_id": "4e8c30c8-a61f-4ce8-a925-c4daa06ffdd4"
       },
       {
        "home": "Melbourne",
        "away": "Clayton",
-       "kickoff": "2027-01-30T02:00:00+00:00"
+       "kickoff": "2027-01-30T02:00:00+00:00",
+       "ext_id": "5f2809a5-b971-4a5b-a154-2e02762c9c0a"
       },
       {
        "home": "Port Melbourne",
        "away": "Middle Park",
-       "kickoff": "2027-01-30T02:00:00+00:00"
+       "kickoff": "2027-01-30T02:00:00+00:00",
+       "ext_id": "8d3cb3d5-1cfa-4bb2-8202-bcd57658ec61"
       }
      ]
     }
-   ]
+   ],
+   "id": "649a52f2-d060-44a3-a3c8-707c3f4c77a7"
   }
  ]
 }

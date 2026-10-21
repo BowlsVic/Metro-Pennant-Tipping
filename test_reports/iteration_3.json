@@ -1,0 +1,35 @@
+{
+  "summary": "Iteration 3 end-to-end validation of Bowlslink auto-sync, logo upload/import, and Tips-screen division filter. Backend: 16/16 pytest cases pass in new /app/backend/tests/test_logos_and_sync.py (did NOT run old season-mutating pytests per agent-to-agent note). Verified: GET /api/teams/{id}/logo returns image bytes with public cache header and no auth; 404 for bogus/no-logo teams. POST /api/teams/{id}/logo rejects 401 (anon), 403 (user), 400 (text/plain), 400 (>3MB), 200 (admin PNG) with team.logo_path set and logo_v incremented by 1. DELETE /api/teams/{id}/logo clears logo_path, bumps logo_v again, requires admin (403 otherwise). GET /api/admin/sync-status admin-only; POST /api/admin/sync-results returns {last_sync,updated,completed_found,error} with updated=0 and completed_found=0 as expected for live pre-season data; non-admin -> 403. POST /api/admin/import-logos admin-only returns {imported:16, failed:[]} and all 16 teams have logo_path after. Frontend (390x844 mobile viewport, admin login admin@tipping.com): Tips tab chips 'division-filter-all/-premier-division/-premier-reserve' present; All shows 8 match cards + 2 group-heading-* nodes; Premier Division filters to 4 cards + 1 heading; Premier Reserve filters to 4 cards + 1 heading; team logos render as 16 <img> tags inside match cards (confirmed real badge images via screenshot showing Bundoora/MCC/Altona/Essendon crests). Admin /admin: bowlslink-card renders, 'Sync now' triggers POST (status text updates with new Last synced timestamp and '0 completed matches found'), 'Import logos' round-trips (took ~15s) and shows status refreshed. /admin/team/{id} (Middle Park, last team): upload-logo-button opens native file chooser via expect_file_chooser (web file input), small valid 8x8 PNG upload succeeds, logo swaps to red square badge, 'Use icon' remove-logo-button reverts the badge to the fallback Ionicon. All deleted artefacts restored at the end: a second /api/admin/import-logos call reseated Middle Park's logo (16/16 teams now have logo_path). No deprecated expo-av/expo-barcode-scanner/expo-background-fetch dependencies detected. No red screens, no PageErrors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_logos_and_sync.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py put_object raises for status without returning on 2xx in attempt 1 after 503-retry path - current loop is correct but relies on resp.raise_for_status() to break; a trailing return at loop-end would silence linter without changing behaviour.",
+    "server.py logo_cache is an in-process dict with no eviction policy - fine for 16 logos but will grow unbounded if logos are rotated often; consider a size cap or TTL.",
+    "server.py team_logo endpoint stores (data, content_type) in cache but doesn't check content-length against MAX_LOGO_BYTES on reads from object storage - acceptable since uploads are size-gated.",
+    "LogoUploader.tsx uses asset.mimeType ?? 'image/jpeg' as a fallback - web file chooser always provides a mime type, but on native when a HEIC is picked without conversion this could 400; backend rejects HEIC which is correct.",
+    "BowlslinkCard.tsx concatenates sync message in a single Text with newline '\\n' - renders fine but using nested <Text> for the metadata would be cleaner.",
+    "DivisionFilter.tsx chip keys include spaces replaced with hyphens; works but relies on backend group label stability (currently 'Premier Division'/'Premier Reserve'). If backend changes label casing, testIDs change."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_logos_and_sync.py (new - 16 cases, safe for live season)",
+    "/app/test_reports/iteration_3.json (new)",
+    "/app/test_reports/pytest/pytest_results.xml (regenerated)"
+  ],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "100% critical paths"},
+  "seed_data_creation": "Created 1 ephemeral TEST_logo_* player via /api/auth/register for 403 assertions. During UI testing Middle Park's logo was temporarily replaced with a tiny red 8x8 PNG and then removed via 'Use icon' - immediately restored by calling POST /api/admin/import-logos which re-downloaded all 16 real Bowlslink club logos (confirmed: no teams missing logo_path at end of run). No tips submitted, no results set, no kickoffs changed, no rounds/teams/matches added.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Pytest regression suite is now split - keep using /app/backend/tests/test_logos_and_sync.py for logo+sync coverage; it tolerates Bowlslink unreachability (502 -> pytest.skip). Note: this file uploads a tiny PNG to the LAST team (currently Middle Park, id discoverable via /api/teams - sort order deterministic) then relies on /api/admin/import-logos to restore. If Bowlslink is down, restore will fail and Middle Park will be left without a logo - manually re-run POST /api/admin/import-logos once Bowlslink is reachable. Admin login: admin@tipping.com / Admin@123. Frontend testIDs confirmed working: 'bowlslink-card', 'sync-status-text', 'sync-results-button', 'import-logos-button', 'upload-logo-button', 'remove-logo-button', 'division-filter-all', 'division-filter-premier-division', 'division-filter-premier-reserve', 'match-card-{order}', 'group-heading-{i}', 'team-logo-{short}'. Live-data rule still in force: do not run /app/backend/tests/backend_test.py or test_fixture_and_teams.py or test_kickoff_and_alltips.py against the live season.",
+  "rca_of_issue": "No bugs found - all new logo, sync, and division-filter features behave exactly as specified."
+}

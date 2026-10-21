@@ -1,4 +1,9 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, Header
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, Header, UploadFile, File, Response
+from starlette.concurrency import run_in_threadpool
+import asyncio
+import uuid
+import httpx
+import requests
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -70,6 +75,9 @@ class Team(BaseDocument):
     secondary: str
     icon: str
     sort: int = 0
+    logo_path: Optional[str] = None
+    logo_v: int = 0
+    ext_id: Optional[str] = None  # Bowlslink competitor id
 
 
 class Round(BaseDocument):
@@ -87,6 +95,7 @@ class Match(BaseDocument):
     winner_team_id: Optional[str] = None  # team id or "draw"
     kickoff: Optional[str] = None  # ISO 8601 UTC
     group: Optional[str] = None  # division label, e.g. "Premier Division"
+    ext_id: Optional[str] = None  # Bowlslink match id
 
     def started(self) -> bool:
         if not self.kickoff:
@@ -237,13 +246,19 @@ async def seed():
             matches = [(c["group"], m) for c in FIXTURE["competitions"] for r in c["rounds"] if r["number"] == num
                        for m in r["matches"]]
             await db.matches.insert_many([Match(round_number=num, order=i, home_team_id=ids[m["home"]],
-                                                away_team_id=ids[m["away"]], kickoff=m["kickoff"], group=g).to_mongo()
+                                                away_team_id=ids[m["away"]], kickoff=m["kickoff"], group=g,
+                                                ext_id=m.get("ext_id")).to_mongo()
                                           for i, (g, m) in enumerate(matches)])
 
 
 @app.on_event("startup")
 async def on_startup():
     await seed()
+    try:
+        await run_in_threadpool(init_storage)
+    except Exception as e:
+        logger.warning(f"Object storage init failed: {e}")
+    asyncio.create_task(sync_loop())
 
 
 # ---------------- Auth routes ----------------
@@ -538,6 +553,196 @@ async def leaderboard(_: User = Depends(current_user)):
     for i, r in enumerate(rows):
         r["rank"] = i + 1 if i == 0 or r["points"] != rows[i - 1]["points"] or r["correct"] != rows[i - 1]["correct"] else rows[i - 1]["rank"]
     return rows
+
+
+# ---------------- Object storage (team logos) ----------------
+STORAGE_BASE = (os.environ.get("INTEGRATION_PROXY_URL") or "").strip() or "https://integrations.emergentagent.com"
+STORAGE_URL = STORAGE_BASE.rstrip("/") + "/objstore/api/v1/storage"
+EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
+APP_NAME = "tip-masters"
+storage_key = None
+logo_cache: dict = {}
+MAX_LOGO_BYTES = 3 * 1024 * 1024
+EXT_BY_TYPE = {"image/png": "png", "image/jpeg": "jpg", "image/jpg": "jpg", "image/webp": "webp", "image/gif": "gif"}
+
+
+def init_storage():
+    global storage_key
+    if storage_key:
+        return storage_key
+    resp = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
+    resp.raise_for_status()
+    storage_key = resp.json()["storage_key"]
+    return storage_key
+
+
+def put_object(path: str, data: bytes, content_type: str) -> dict:
+    global storage_key
+    for attempt in range(2):
+        key = init_storage()
+        resp = requests.put(f"{STORAGE_URL}/objects/{path}",
+                            headers={"X-Storage-Key": key, "Content-Type": content_type}, data=data, timeout=120)
+        if resp.status_code == 503 and attempt == 0:
+            storage_key = None
+            continue
+        if resp.status_code == 402:
+            raise HTTPException(402, "Storage credits exhausted. Please top up and try again later")
+        resp.raise_for_status()
+        return resp.json()
+
+
+def get_object(path: str):
+    key = init_storage()
+    resp = requests.get(f"{STORAGE_URL}/objects/{path}", headers={"X-Storage-Key": key}, timeout=60)
+    resp.raise_for_status()
+    return resp.content, resp.headers.get("Content-Type", "application/octet-stream")
+
+
+async def save_team_logo(team: Team, data: bytes, content_type: str) -> dict:
+    ext = EXT_BY_TYPE.get(content_type.split(";")[0].lower())
+    if not ext:
+        raise HTTPException(400, "Logo must be a PNG, JPG, WEBP or GIF image")
+    if len(data) > MAX_LOGO_BYTES:
+        raise HTTPException(400, "Logo must be under 3 MB")
+    res = await run_in_threadpool(put_object, f"{APP_NAME}/logos/{team.id}/{uuid.uuid4()}.{ext}", data, content_type)
+    doc = await db.teams.find_one_and_update({"_id": oid(team.id)},
+                                             {"$set": {"logo_path": res["path"]}, "$inc": {"logo_v": 1}},
+                                             return_document=ReturnDocument.AFTER)
+    return Team.from_mongo(doc).model_dump()
+
+
+@api_router.post("/teams/{team_id}/logo")
+async def upload_team_logo(team_id: str, file: UploadFile = File(...), _: User = Depends(admin_user)):
+    team = Team.from_mongo(await db.teams.find_one({"_id": oid(team_id)}))
+    if not team:
+        raise HTTPException(404, "Team not found")
+    return await save_team_logo(team, await file.read(), file.content_type or "")
+
+
+@api_router.delete("/teams/{team_id}/logo")
+async def remove_team_logo(team_id: str, _: User = Depends(admin_user)):
+    doc = await db.teams.find_one_and_update({"_id": oid(team_id)}, {"$set": {"logo_path": None}, "$inc": {"logo_v": 1}},
+                                             return_document=ReturnDocument.AFTER)
+    if not doc:
+        raise HTTPException(404, "Team not found")
+    return Team.from_mongo(doc).model_dump()
+
+
+@api_router.get("/teams/{team_id}/logo")
+async def team_logo(team_id: str):
+    """Public: club logos are public branding, served without auth so images render everywhere."""
+    team = Team.from_mongo(await db.teams.find_one({"_id": oid(team_id)}))
+    if not team or not team.logo_path:
+        raise HTTPException(404, "No logo")
+    if team.logo_path not in logo_cache:
+        try:
+            logo_cache[team.logo_path] = await run_in_threadpool(get_object, team.logo_path)
+        except Exception:
+            raise HTTPException(502, "Logo temporarily unavailable")
+    data, ct = logo_cache[team.logo_path]
+    return Response(content=data, media_type=ct, headers={"Cache-Control": "public, max-age=604800"})
+
+
+# ---------------- Bowlslink sync (results + logos) ----------------
+BOWLSLINK_API = "https://api.bowlslink.com.au/results-api"
+SYNC_INTERVAL_SECONDS = 15 * 60
+
+
+async def fetch_competition(cid: str) -> dict:
+    async with httpx.AsyncClient(timeout=30) as c:
+        r = await c.get(f"{BOWLSLINK_API}/competition/{cid}/matches")
+        r.raise_for_status()
+        return r.json()
+
+
+async def sync_results() -> dict:
+    """Copies completed Bowlslink results onto our matches (matched by Bowlslink match id)."""
+    team_by_ext = {t["ext_id"]: str(t["_id"]) async for t in db.teams.find({"ext_id": {"$ne": None}})}
+    updated, completed = 0, 0
+    for comp in FIXTURE["competitions"]:
+        data = await fetch_competition(comp["id"])
+        for inc in data.get("include", []):
+            if inc.get("type") != "multiFormatResult":
+                continue
+            a = inc.get("attributes") or {}
+            mid = ((inc.get("includes") or {}).get("match") or {}).get("id")
+            if not mid or not (a.get("isCompleted") or a.get("isFinalized")):
+                continue
+            m = Match.from_mongo(await db.matches.find_one({"ext_id": mid}))
+            if not m:
+                continue
+            completed += 1
+            num = a.get("winnerCompetitorNumber")
+            if num == 1:
+                winner = m.home_team_id
+            elif num == 2:
+                winner = m.away_team_id
+            elif a.get("winnerId") and team_by_ext.get(a["winnerId"]) in (m.home_team_id, m.away_team_id):
+                winner = team_by_ext[a["winnerId"]]
+            else:
+                winner = "draw"
+            if m.winner_team_id != winner:
+                await db.matches.update_one({"_id": oid(m.id)}, {"$set": {"winner_team_id": winner}})
+                updated += 1
+    status = {"last_sync": datetime.now(timezone.utc).isoformat(), "updated": updated,
+              "completed_found": completed, "error": None}
+    await db.meta.update_one({"_id": "sync"}, {"$set": status}, upsert=True)
+    return status
+
+
+async def sync_loop():
+    while True:
+        try:
+            s = await sync_results()
+            if s["updated"]:
+                logger.info(f"Bowlslink sync updated {s['updated']} results")
+        except Exception as e:
+            logger.warning(f"Bowlslink sync failed: {e}")
+            await db.meta.update_one({"_id": "sync"}, {"$set": {"error": str(e)[:200],
+                                     "last_attempt": datetime.now(timezone.utc).isoformat()}}, upsert=True)
+        await asyncio.sleep(SYNC_INTERVAL_SECONDS)
+
+
+@api_router.get("/admin/sync-status")
+async def sync_status(_: User = Depends(admin_user)):
+    return await db.meta.find_one({"_id": "sync"}, {"_id": 0}) or {}
+
+
+@api_router.post("/admin/sync-results")
+async def sync_now(_: User = Depends(admin_user)):
+    try:
+        return await sync_results()
+    except httpx.HTTPError as e:
+        raise HTTPException(502, f"Couldn't reach Bowlslink: {e}")
+
+
+@api_router.post("/admin/import-logos")
+async def import_logos(_: User = Depends(admin_user)):
+    """Downloads each club's current logo from Bowlslink and stores it in object storage."""
+    logo_by_ext = {}
+    try:
+        for comp in FIXTURE["competitions"]:
+            data = await fetch_competition(comp["id"])
+            for inc in data.get("include", []):
+                if inc.get("type") == "competitor" and (inc.get("attributes") or {}).get("logoUrl"):
+                    logo_by_ext[inc["id"]] = inc["attributes"]["logoUrl"]
+    except httpx.HTTPError as e:
+        raise HTTPException(502, f"Couldn't reach Bowlslink: {e}")
+    imported, failed = 0, []
+    async with httpx.AsyncClient(timeout=30, follow_redirects=True) as c:
+        async for t in db.teams.find({"ext_id": {"$ne": None}}):
+            team = Team.from_mongo(t)
+            url = logo_by_ext.get(team.ext_id)
+            if not url:
+                continue
+            try:
+                r = await c.get(url)
+                r.raise_for_status()
+                await save_team_logo(team, r.content, r.headers.get("Content-Type", ""))
+                imported += 1
+            except Exception:
+                failed.append(team.name)
+    return {"imported": imported, "failed": failed}
 
 
 app.include_router(api_router)

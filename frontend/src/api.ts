@@ -3,7 +3,14 @@ import { storage } from "@/src/utils/storage";
 export const TOKEN_KEY = "auth_token";
 const BASE = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-export type Team = { id: string; name: string; short: string; color: string; secondary: string; icon: string };
+export type Team = {
+  id: string; name: string; short: string; color: string; secondary: string; icon: string;
+  logo_path?: string | null; logo_v?: number;
+};
+
+export const teamLogoUrl = (t: Team) => `${BASE}/api/teams/${t.id}/logo?v=${t.logo_v ?? 0}`;
+
+export type SyncStatus = { last_sync?: string; updated?: number; completed_found?: number; error?: string | null; last_attempt?: string };
 export type User = { id: string; email: string; name: string; role: "user" | "admin" };
 export type RoundSummary = {
   id: string; number: number; name: string; is_final: boolean; locked: boolean;

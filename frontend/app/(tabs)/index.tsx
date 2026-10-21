@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { api, MatchItem, Team } from "@/src/api";
 import { RoundChips } from "@/src/components/RoundChips";
+import { DivisionFilter } from "@/src/components/DivisionFilter";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { useToast } from "@/src/components/Toast";
 import { Button, EmptyState, ErrorState } from "@/src/components/ui";
@@ -31,6 +32,7 @@ export default function TipsScreen() {
   const round = useRound(selected);
   const [picks, setPicks] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [division, setDivision] = useState<string>("all");
 
   useEffect(() => {
     if (selected == null && rounds.data?.length) {
@@ -81,6 +83,8 @@ export default function TipsScreen() {
   };
 
   const r = round.data;
+  const groups = Array.from(new Set((r?.matches ?? []).map((m) => m.group).filter((g): g is string => !!g)));
+  const shown = (r?.matches ?? []).filter((m) => division === "all" || m.group === division);
 
   return (
     <View style={styles.root}>
@@ -95,6 +99,7 @@ export default function TipsScreen() {
           )}
         </View>
         {rounds.data && <RoundChips rounds={rounds.data} selected={selected} onSelect={setSelected} />}
+        {groups.length > 1 && <DivisionFilter options={groups} value={division} onChange={setDivision} />}
       </View>
 
       {rounds.isError || round.isError ? (
@@ -129,9 +134,9 @@ export default function TipsScreen() {
             {r.matches.length === 0 ? (
               <EmptyState testID="round-empty" title="Round not configured yet" subtitle="Fixtures for this round will appear here once the admin adds them." />
             ) : (
-              r.matches.map((m, i) => (
+              shown.map((m, i) => (
                 <Animated.View key={m.id} entering={FadeInDown.delay(i * 60)}>
-                  {m.group && m.group !== r.matches[i - 1]?.group && (
+                  {m.group && m.group !== shown[i - 1]?.group && (
                     <Text testID={`group-heading-${i}`} style={[styles.groupHead, i > 0 && styles.groupHeadSpaced]}>{m.group.toUpperCase()}</Text>
                   )}
                   <MatchCard

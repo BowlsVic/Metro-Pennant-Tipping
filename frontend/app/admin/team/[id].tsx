@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { api, Team } from "@/src/api";
 import { AdminHeader } from "@/src/components/AdminHeader";
+import { LogoUploader } from "@/src/components/LogoUploader";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { useToast } from "@/src/components/Toast";
 import { Button } from "@/src/components/ui";
@@ -90,6 +91,18 @@ export default function EditTeam() {
           <TeamLogo team={draft} size={88} />
           <Text style={styles.previewName}>{draft.name || "Team name"}</Text>
         </View>
+        <Text style={styles.label}>CLUB LOGO</Text>
+        {isNew ? (
+          <Text style={styles.hint}>Add the team first, then open it again to upload its logo.</Text>
+        ) : (
+          <LogoUploader
+            team={draft}
+            onChange={(t) => {
+              setDraft({ ...draft, logo_path: t.logo_path, logo_v: t.logo_v });
+              qc.invalidateQueries({ queryKey: ["teams"] });
+            }}
+          />
+        )}
         <Text style={styles.label}>NAME</Text>
         <TextInput testID="team-name-input" style={styles.input} value={draft.name} onChangeText={(v) => setDraft({ ...draft, name: v })} maxLength={30} placeholderTextColor={colors.muted} />
         <Text style={styles.label}>SHORT CODE</Text>
@@ -98,7 +111,7 @@ export default function EditTeam() {
         <Swatches field="color" />
         <Text style={styles.label}>SECONDARY COLOUR</Text>
         <Swatches field="secondary" />
-        <Text style={styles.label}>LOGO ICON</Text>
+        <Text style={styles.label}>{draft.logo_path ? "FALLBACK ICON" : "LOGO ICON"}</Text>
         <View style={styles.grid}>
           {ICONS.map((ic) => (
             <Pressable key={ic} testID={`team-icon-${ic}`} onPress={() => setDraft({ ...draft, icon: ic })} style={[styles.iconBtn, draft.icon === ic && styles.iconSel]}>
@@ -118,6 +131,7 @@ const useStyles = makeStyles((c) => ({
   preview: { alignItems: "center", gap: spacing.sm, paddingVertical: spacing.md },
   previewName: { color: c.onSurface, fontFamily: fonts.display, fontSize: 26 },
   label: { color: c.muted, fontFamily: fonts.display, fontSize: 13, letterSpacing: 1, marginTop: spacing.sm },
+  hint: { color: c.onSurfaceTertiary, fontFamily: fonts.text, fontSize: 13 },
   input: { height: 48, backgroundColor: c.surfaceTertiary, borderRadius: radius.md, borderWidth: 1, borderColor: c.border, paddingHorizontal: spacing.lg, color: c.onSurface, fontFamily: fonts.text, fontSize: 15 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   swatch: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: c.border },
