@@ -366,7 +366,8 @@ async def apple_sign_in(body: AppleIn):
 # ---------------- Teams ----------------
 @api_router.get("/teams")
 async def list_teams():
-    return [Team.from_mongo(t).model_dump() async for t in db.teams.find().sort([("sort", 1), ("_id", 1)])]
+    teams = [Team.from_mongo(t).model_dump() async for t in db.teams.find()]
+    return sorted(teams, key=lambda t: t["name"].lower())
 
 
 @api_router.post("/teams")
