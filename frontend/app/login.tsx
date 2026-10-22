@@ -11,8 +11,8 @@ import { SocialButtons } from "@/src/components/SocialButtons";
 import { Button } from "@/src/components/ui";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 
-const HERO =
-  "https://images.unsplash.com/photo-1770658118825-3bc745f79f42?fm=jpg&q=80&w=1200&auto=format&fit=crop";
+const HERO = require("../assets/images/login-hero.webp");
+const BV_LOGO = require("../assets/images/bowls-vic-logo.png");
 
 export default function Login() {
   const { user, login, register, authError } = useAuth();
@@ -47,11 +47,15 @@ export default function Login() {
     <View style={styles.root}>
       <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xl }} keyboardShouldPersistTaps="handled">
         <View style={styles.hero}>
-          <Image source={{ uri: HERO }} style={styles.heroImg} contentFit="cover" contentPosition="bottom" />
+          <Image source={HERO} style={styles.heroImg} contentFit="cover" contentPosition="center" />
           <LinearGradient colors={["transparent", colors.scrim, colors.surface]} style={styles.heroScrim} />
+          {/* Bowls Victoria logo has an opaque white background, so it sits in a white badge. */}
+          <View style={[styles.logoBadge, { top: insets.top + spacing.md }]}>
+            <Image testID="bowls-vic-logo" source={BV_LOGO} style={styles.logoImg} contentFit="contain" accessibilityLabel="Bowls Victoria" />
+          </View>
           <View style={[styles.heroText, { paddingTop: insets.top }]}>
             <Text style={styles.kicker}>BOWLS TIPPING · METRO PENNANT 2026-27</Text>
-            <Text testID="app-title" style={styles.title}>TIP{"\n"}MASTERS</Text>
+            <Text testID="app-title" style={styles.title}>BV{"\n"}TIPPING</Text>
           </View>
         </View>
 
@@ -119,6 +123,8 @@ const useStyles = makeStyles((c) => ({
   hero: { height: 340 },
   heroImg: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
   heroScrim: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  logoBadge: { position: "absolute", right: spacing.lg, zIndex: 1, width: 72, height: 72, borderRadius: radius.md, backgroundColor: c.surfaceInverse, padding: spacing.xs, overflow: "hidden" },
+  logoImg: { width: "100%", height: "100%" },
   heroText: { flex: 1, justifyContent: "flex-end", paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
   kicker: { color: c.brandPrimary, fontFamily: fonts.displaySemi, fontSize: 14, letterSpacing: 2 },
   title: { color: c.onSurface, fontFamily: fonts.display, fontSize: 64, lineHeight: 60, marginTop: spacing.xs },

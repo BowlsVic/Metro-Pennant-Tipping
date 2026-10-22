@@ -84,3 +84,5 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Pending: security fixes (Apple sign-in by Apple ID, login rate limiting, admin password) — user deferred
 - Round Recap tested (iteration_5) — PASS
 - Tip streaks on ladder (streak, best_streak in /api/leaderboard; flame badge when streak >= 2) — PASS
+- Rebranded Tip Masters -> BV Tipping (login title, app.json name, web <title>). Awaiting user's new login background image.
+- Login background replaced with user's photo (assets/images/login-hero.webp), dark fade kept; Bowls Victoria logo badge top-right (assets/images/bowls-vic-logo.png)

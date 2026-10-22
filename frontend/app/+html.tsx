@@ -17,6 +17,7 @@ export default function Root({ children }: PropsWithChildren) {
           If you want to enable scrolling, remove `ScrollViewStyleReset` and
           set `overflow: auto` on the body style below.
         */}
+        <title>BV Tipping</title>
         <ScrollViewStyleReset />
         <style
           dangerouslySetInnerHTML={{
