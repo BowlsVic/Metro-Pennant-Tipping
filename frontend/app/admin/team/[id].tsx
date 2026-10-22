@@ -17,7 +17,7 @@ import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 
 // Team kit palette: data values that represent club colours, identical in any theme.
 const PALETTE = ["#C8102E", "#E35205", "#F2A900", "#FFD100", "#00843D", "#1B5E20", "#0072CE", "#002B5C", "#6A1B9A", "#5B6770", "#1A1A1A", "#FFFFFF"];
-const ICONS = ["paw", "fish", "shield", "flash", "moon", "rocket", "diamond", "trophy", "flame", "star", "football", "skull", "leaf", "planet", "snow", "sunny"];
+const ICONS = ["paw", "fish", "shield", "flash", "moon", "rocket", "diamond", "trophy", "flame", "star", "ellipse", "skull", "leaf", "planet", "snow", "sunny"];
 
 export default function EditTeam() {
   const { id } = useLocalSearchParams<{ id: string }>();

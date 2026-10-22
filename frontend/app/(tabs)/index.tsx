@@ -90,7 +90,7 @@ export default function TipsScreen() {
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>TIPPING</Text>
+          <Text style={styles.title}>BOWLS TIPPING</Text>
           {r && (
             <View testID="round-score-badge" style={styles.scoreBadge}>
               <Text style={styles.scoreNum}>{r.my_points}</Text>

@@ -27,7 +27,7 @@ export default function TeamsScreen() {
         <View style={styles.center}><ActivityIndicator color={colors.brandPrimary} /></View>
       ) : (
         <FlatList
-          data={q.data}
+          data={q.data ? [...q.data].sort((a, b) => a.name.localeCompare(b.name)) : undefined}
           numColumns={2}
           keyExtractor={(t) => t.id}
           columnWrapperStyle={{ gap: spacing.md }}

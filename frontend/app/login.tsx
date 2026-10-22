@@ -12,7 +12,7 @@ import { Button } from "@/src/components/ui";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 
 const HERO =
-  "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200";
+  "https://images.unsplash.com/photo-1770658118825-3bc745f79f42?fm=jpg&q=80&w=1200&auto=format&fit=crop";
 
 export default function Login() {
   const { user, login, register, authError } = useAuth();
@@ -47,10 +47,10 @@ export default function Login() {
     <View style={styles.root}>
       <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xl }} keyboardShouldPersistTaps="handled">
         <View style={styles.hero}>
-          <Image source={{ uri: HERO }} style={styles.heroImg} contentFit="cover" />
+          <Image source={{ uri: HERO }} style={styles.heroImg} contentFit="cover" contentPosition="bottom" />
           <LinearGradient colors={["transparent", colors.scrim, colors.surface]} style={styles.heroScrim} />
           <View style={[styles.heroText, { paddingTop: insets.top }]}>
-            <Text style={styles.kicker}>SEASON 2026 · 14 ROUNDS + FINALS</Text>
+            <Text style={styles.kicker}>BOWLS TIPPING · METRO PENNANT 2026-27</Text>
             <Text testID="app-title" style={styles.title}>TIP{"\n"}MASTERS</Text>
           </View>
         </View>

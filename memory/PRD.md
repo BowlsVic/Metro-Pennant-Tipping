@@ -66,6 +66,10 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Added frontend/vercel.json and frontend/netlify.toml (build command, dist output, SPA rewrites); /app/DEPLOY_WEB.md step-by-step guide
 - app.json name set to "Tip Masters" (browser tab title / app display name; slug and bundle ids unchanged)
 
+## Iteration 10 (2026-06)
+- Rebranded wording to bowls tipping: login kicker "BOWLS TIPPING · METRO PENNANT 2026-27", Tips header "BOWLS TIPPING", login photo now a lawn bowls green (was a football stadium), "football" team icon option replaced with "ellipse"
+- Bundle id / package (com.emergent.footytips.n4o11s) intentionally unchanged (needed for builds/Apple sign-in)
+
 ## Backlog
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard
