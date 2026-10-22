@@ -18,6 +18,8 @@ import { usesNativeTabs } from "@/src/navigation";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 import { formatKickoff, hasStarted, untilLabel } from "@/src/time";
 
+const REMINDER_WINDOW_MS = 48 * 60 * 60 * 1000;
+
 export default function TipsScreen() {
   const styles = useStyles();
   const { colors } = useTheme();
@@ -53,6 +55,9 @@ export default function TipsScreen() {
   const dirty = openMatches.some((m) => picks[m.id] && picks[m.id] !== m.my_tip);
   const pickedOpen = openMatches.filter((m) => picks[m.id]).length;
   const anyRevealed = round.data?.matches.some(isLocked) ?? false;
+  const untipped = openMatches.filter((m) => !m.my_tip && m.kickoff);
+  const nextLock = untipped.map((m) => m.kickoff as string).sort()[0];
+  const showReminder = !!nextLock && Date.parse(nextLock) - now < REMINDER_WINDOW_MS;
   const staleLock = round.data?.matches.some((m) => !m.locked && hasStarted(m.kickoff, now)) ?? false;
 
   useEffect(() => {
@@ -112,6 +117,17 @@ export default function TipsScreen() {
             contentContainerStyle={styles.list}
             refreshControl={<RefreshControl refreshing={round.isRefetching} onRefresh={refresh} tintColor={colors.brandPrimary} />}
           >
+            {showReminder && (
+              <View testID="tip-reminder-banner" style={styles.reminder}>
+                <Ionicons name="alarm" size={22} color={colors.onWarning} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.reminderTitle}>
+                    {untipped.length} {untipped.length === 1 ? "match" : "matches"} still to tip
+                  </Text>
+                  <Text style={styles.reminderSub}>{untilLabel(nextLock, now)} — get your tips in!</Text>
+                </View>
+              </View>
+            )}
             <View style={styles.roundHead}>
               <View style={{ flex: 1 }}>
                 <Text testID="round-name" style={styles.roundName}>{r.name}</Text>
@@ -227,6 +243,9 @@ const useStyles = makeStyles((c) => ({
   scoreLbl: { color: c.onBrandTertiary, fontFamily: fonts.displaySemi, fontSize: 12 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   list: { padding: spacing.lg, gap: spacing.md },
+  reminder: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: c.warning, borderRadius: radius.lg, padding: spacing.md },
+  reminderTitle: { color: c.onWarning, fontFamily: fonts.display, fontSize: 18 },
+  reminderSub: { color: c.onWarning, fontFamily: fonts.displaySemi, fontSize: 14 },
   roundHead: { marginBottom: spacing.xs, flexDirection: "row", alignItems: "center", gap: spacing.sm },
   groupHead: { color: c.onSurfaceTertiary, fontFamily: fonts.display, fontSize: 14, letterSpacing: 1.2, marginBottom: spacing.sm },
   groupHeadSpaced: { marginTop: spacing.md },
