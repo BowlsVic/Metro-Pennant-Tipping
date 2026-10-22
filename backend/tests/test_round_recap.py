@@ -1,20 +1,18 @@
 """Round Recap Card feature tests.
 
-Covers:
-- GET /api/rounds/{n}/recap (unavailable before results, available after)
-- best_pick lowest-share calculation
-- rank + prev_rank + won_round + round_top_points
-- Regression: /api/leaderboard and /api/round-winners after compute_standings(upto=...)
-- Admin has rank==null (admin excluded from ladder)
-
-Live-data safety: creates 3 TEST_recap_* players, sets then clears R1 + R2 winners,
-and deletes the test players + their tips before the module exits. No rounds,
-teams, matches, or kickoffs are mutated.
+DEPRECATED: This module sets winners on live R1 + R2 which the main agent
+has explicitly asked NOT to touch. Replaced by test_recap_and_streaks.py which
+uses an ephemeral finals round (number > 14). Skipped at module level.
 """
 import os
 import uuid
 import pytest
 import requests
+
+pytest.skip(
+    "Live-data unsafe: mutates R1/R2 winners. Use test_recap_and_streaks.py instead.",
+    allow_module_level=True,
+)
 
 BASE_URL = os.environ.get("EXPO_PUBLIC_BACKEND_URL", "https://footy-tips-2.preview.emergentagent.com").rstrip("/")
 

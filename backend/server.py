@@ -613,6 +613,8 @@ async def compute_standings(upto: Optional[int] = None):
         by_round.setdefault(m.round_number, []).append(m)
     complete_rounds = {rn: ms for rn, ms in by_round.items() if all(x.winner_team_id for x in ms)}
     winners = {m.id: m.winner_team_id for m in matches if m.winner_team_id}
+    decided_seq = sorted((m for m in matches if m.winner_team_id),
+                         key=lambda m: (m.kickoff or "", m.round_number, m.order))
     round_names = {r["number"]: r["name"] async for r in db.rounds.find()}
     users = [User.from_mongo(u) async for u in db.users.find({"role": {"$ne": "admin"}})]
     names = {u.id: u.name for u in users}
@@ -633,8 +635,19 @@ async def compute_standings(upto: Optional[int] = None):
             bonus += perfect
             round_pts.setdefault(rn, {})[u.id] = c + perfect
         correct = sum(correct_by_round.values())
+        # Tip streaks: consecutive correct tips across decided matches in kick-off order.
+        # A wrong tip, a missed tip or a draw ends the run.
+        picks = {t.match_id: t.team_id for t in tips}
+        streak = best_streak = 0
+        for m in decided_seq:
+            if picks.get(m.id) == m.winner_team_id:
+                streak += 1
+                best_streak = max(best_streak, streak)
+            else:
+                streak = 0
         rows.append({"user_id": u.id, "name": u.name, "correct": correct, "bonus": bonus,
-                     "points": correct + bonus, "tips": len(tips), "round_wins": 0})
+                     "points": correct + bonus, "tips": len(tips), "round_wins": 0,
+                     "streak": streak, "best_streak": best_streak})
     round_winners = []
     for rn in sorted(complete_rounds):
         pts = round_pts.get(rn, {})

@@ -82,3 +82,5 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Round Recap card + GET /api/rounds/{n}/recap (score, best/boldest correct pick, ladder movement) — built, NOT yet tested (no completed rounds yet)
 - Web: app centred in 720px column on desktop browsers; hosting guide in /app/DEPLOY_WEB.md (Vercel/Netlify + Emergent backend)
 - Pending: security fixes (Apple sign-in by Apple ID, login rate limiting, admin password) — user deferred
+- Round Recap tested (iteration_5) — PASS
+- Tip streaks on ladder (streak, best_streak in /api/leaderboard; flame badge when streak >= 2) — PASS

@@ -1,3 +1,4 @@
+import Ionicons from "@react-native-vector-icons/ionicons";
 import { ActivityIndicator, FlatList, RefreshControl, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,10 +30,11 @@ export default function LadderScreen() {
           <View style={styles.podRankRow}>
             <Text style={styles.podRank}>#{r.rank}</Text>
             <WinsBadge count={r.round_wins} testID={`ladder-wins-${r.rank}`} />
+            <StreakBadge row={r} testID={`ladder-streak-${r.user_id}`} />
           </View>
           <Text numberOfLines={1} style={styles.podName}>{r.name}{r.user_id === user?.id ? " (you)" : ""}</Text>
           <Text testID={`ladder-points-${i + 1}`} style={styles.podPts}>{r.points}</Text>
-          <Text style={styles.podMeta}>{r.correct} correct · {r.bonus} bonus{r.round_wins ? ` · ${r.round_wins} round win${r.round_wins === 1 ? "" : "s"}` : ""}</Text>
+          <Text style={styles.podMeta}>{r.correct} correct · {r.bonus} bonus{r.round_wins ? ` · ${r.round_wins} round win${r.round_wins === 1 ? "" : "s"}` : ""}{r.best_streak ? ` · best streak ${r.best_streak}` : ""}</Text>
         </Animated.View>
       ))}
     </View>
@@ -45,8 +47,9 @@ export default function LadderScreen() {
         <View style={styles.nameRow}>
           <Text numberOfLines={1} style={[styles.name, { flexShrink: 1 }]}>{item.name}{item.user_id === user?.id ? " (you)" : ""}</Text>
           <WinsBadge count={item.round_wins} testID={`ladder-row-wins-${item.user_id}`} />
+          <StreakBadge row={item} testID={`ladder-streak-${item.user_id}`} />
         </View>
-        <Text style={styles.meta}>{item.correct} correct · {item.bonus} bonus</Text>
+        <Text style={styles.meta}>{item.correct} correct · {item.bonus} bonus{item.best_streak ? ` · best streak ${item.best_streak}` : ""}</Text>
       </View>
       <Text style={styles.pts}>{item.points}</Text>
     </View>
@@ -61,7 +64,7 @@ export default function LadderScreen() {
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
         <Text style={styles.title}>LADDER</Text>
-        <Text style={styles.sub}>1 pt per correct tip · +1 for a perfect round · <Text style={styles.subAccent}>trophy = round win</Text></Text>
+        <Text style={styles.sub}>1 pt per correct tip · +1 for a perfect round · <Text style={styles.subAccent}>trophy = round win · flame = current tip streak</Text></Text>
       </View>
       {q.isError ? (
         <ErrorState onRetry={q.refetch} />
@@ -87,7 +90,22 @@ export default function LadderScreen() {
   );
 }
 
+// Shows the current run of correct tips (2+ only, so a single tip isn't a "streak").
+function StreakBadge({ row, testID }: { row: LadderRow; testID: string }) {
+  const styles = useStyles();
+  const { colors } = useTheme();
+  if (row.streak < 2) return null;
+  return (
+    <View testID={testID} style={styles.streak}>
+      <Ionicons name="flame" size={12} color={colors.brandPrimary} />
+      <Text style={styles.streakText}>{row.streak}</Text>
+    </View>
+  );
+}
+
 const useStyles = makeStyles((c) => ({
+  streak: { flexDirection: "row", alignItems: "center", gap: 2, backgroundColor: c.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2 },
+  streakText: { color: c.onBrandTertiary, fontFamily: fonts.display, fontSize: 13 },
   root: { flex: 1, backgroundColor: c.surface },
   header: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, borderBottomWidth: 1, borderBottomColor: c.divider },
   title: { color: c.onSurface, fontFamily: fonts.display, fontSize: 36 },

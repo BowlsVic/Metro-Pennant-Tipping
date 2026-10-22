@@ -32,7 +32,7 @@ export type AllTips = {
 export type RoundDetail = RoundSummary & {
   matches: MatchItem[]; my_correct: number; my_bonus: number; my_points: number;
 };
-export type LadderRow = { user_id: string; name: string; correct: number; bonus: number; points: number; tips: number; rank: number; round_wins: number };
+export type LadderRow = { user_id: string; name: string; correct: number; bonus: number; points: number; tips: number; rank: number; round_wins: number; streak: number; best_streak: number };
 export type RoundWinner = { number: number; name: string; points: number; winners: { user_id: string; name: string }[] };
 export type RoundRecap = {
   available: boolean; number: number; name: string; correct: number; total: number; bonus: number; points: number; tipped: number;
