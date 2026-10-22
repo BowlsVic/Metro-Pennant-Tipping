@@ -12,7 +12,7 @@ import { Button } from "@/src/components/ui";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 
 const HERO = require("../assets/images/login-hero.webp");
-const BV_LOGO = require("../assets/images/bowls-vic-logo.png");
+const BV_LOGO = require("../assets/images/bv-round-logo.png");
 
 export default function Login() {
   const { user, login, register, authError } = useAuth();
@@ -49,7 +49,7 @@ export default function Login() {
         <View style={styles.hero}>
           <Image source={HERO} style={styles.heroImg} contentFit="cover" contentPosition="center" />
           <LinearGradient colors={["transparent", colors.scrim, colors.surface]} style={styles.heroScrim} />
-          {/* Bowls Victoria logo has an opaque white background, so it sits in a white badge. */}
+          {/* Round Bowls Victoria logo (transparent corners), no badge needed. */}
           <View style={[styles.logoBadge, { top: insets.top + spacing.md }]}>
             <Image testID="bowls-vic-logo" source={BV_LOGO} style={styles.logoImg} contentFit="contain" accessibilityLabel="Bowls Victoria" />
           </View>
@@ -123,7 +123,7 @@ const useStyles = makeStyles((c) => ({
   hero: { height: 340 },
   heroImg: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
   heroScrim: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
-  logoBadge: { position: "absolute", right: spacing.lg, zIndex: 1, width: 72, height: 72, borderRadius: radius.md, backgroundColor: c.surfaceInverse, padding: spacing.xs, overflow: "hidden" },
+  logoBadge: { position: "absolute", right: spacing.lg, zIndex: 1, width: 80, height: 80 },
   logoImg: { width: "100%", height: "100%" },
   heroText: { flex: 1, justifyContent: "flex-end", paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
   kicker: { color: c.brandPrimary, fontFamily: fonts.displaySemi, fontSize: 14, letterSpacing: 2 },

@@ -86,3 +86,5 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - Tip streaks on ladder (streak, best_streak in /api/leaderboard; flame badge when streak >= 2) — PASS
 - Rebranded Tip Masters -> BV Tipping (login title, app.json name, web <title>). Awaiting user's new login background image.
 - Login background replaced with user's photo (assets/images/login-hero.webp), dark fade kept; Bowls Victoria logo badge top-right (assets/images/bowls-vic-logo.png)
+- Login logo swapped to round blue Bowls Victoria logo (assets/images/bv-round-logo.png). NOTE: preview DB and live DB are separate — team edits made in preview admin do NOT copy to live; edit in live admin.
+- Copied team colours/logos/short codes from preview DB to live (footy-tips-2.emergent.host) via admin API. Login photo cropped (top 175px) to hide roofline.
