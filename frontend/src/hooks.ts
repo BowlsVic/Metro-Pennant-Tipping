@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-import { AllTips, api, LadderRow, RoundDetail, RoundSummary, RoundWinner, Team } from "@/src/api";
+import { AllTips, api, LadderRow, RoundDetail, RoundRecap, RoundSummary, RoundWinner, Team } from "@/src/api";
 
 export function useTeams() {
   const q = useQuery({ queryKey: ["teams"], queryFn: () => api<Team[]>("/teams") });
@@ -23,6 +23,9 @@ export const useRoundWinners = () =>
 
 export const useAllTips = (n: number) =>
   useQuery({ queryKey: ["all-tips", n], queryFn: () => api<AllTips>(`/rounds/${n}/all-tips`) });
+
+export const useRoundRecap = (n: number, enabled: boolean) =>
+  useQuery({ queryKey: ["ladder", "recap", n], queryFn: () => api<RoundRecap>(`/rounds/${n}/recap`), enabled });
 
 // Ticks every 30s so kick-off locks update on screen without a refetch.
 export function useNow(intervalMs = 30000) {

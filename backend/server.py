@@ -603,9 +603,11 @@ async def delete_match(match_id: str, _: User = Depends(admin_user)):
 
 
 # ---------------- Leaderboard ----------------
-async def compute_standings():
-    """Season ladder rows plus the top scorer(s) of every completed round (ties share the win)."""
-    matches = [Match.from_mongo(m) async for m in db.matches.find()]
+async def compute_standings(upto: Optional[int] = None):
+    """Season ladder rows plus the top scorer(s) of every completed round (ties share the win).
+    `upto` limits the ladder to rounds <= that number (used for ladder movement)."""
+    mq = {"round_number": {"$lte": upto}} if upto is not None else {}
+    matches = [Match.from_mongo(m) async for m in db.matches.find(mq)]
     by_round = {}
     for m in matches:
         by_round.setdefault(m.round_number, []).append(m)
@@ -615,7 +617,7 @@ async def compute_standings():
     users = [User.from_mongo(u) async for u in db.users.find({"role": {"$ne": "admin"}})]
     names = {u.id: u.name for u in users}
     tips_by_user = {}
-    async for t in db.tips.find():
+    async for t in db.tips.find(mq):
         tips_by_user.setdefault(t["user_id"], []).append(Tip.from_mongo(t))
     rows, round_pts = [], {}
     for u in users:
@@ -665,6 +667,46 @@ async def round_winners(_: User = Depends(current_user)):
     """Completed rounds, latest first, with the player(s) who scored most that round."""
     _rows, winners = await compute_standings()
     return list(reversed(winners))
+
+
+@api_router.get("/rounds/{number}/recap")
+async def round_recap(number: int, user: User = Depends(current_user)):
+    """Personal summary of a completed round: score, boldest correct pick and ladder movement."""
+    r = Round.from_mongo(await db.rounds.find_one({"number": number}))
+    if not r:
+        raise HTTPException(404, "Round not found")
+    matches = [Match.from_mongo(m) async for m in db.matches.find({"round_number": number})]
+    if not matches or not all(m.winner_team_id for m in matches):
+        return {"available": False}
+    player_ids = {str(u["_id"]) async for u in db.users.find({"role": {"$ne": "admin"}}, {"_id": 1})}
+    all_tips = [Tip.from_mongo(t) async for t in db.tips.find({"round_number": number})]
+    all_tips = [t for t in all_tips if t.user_id in player_ids]
+    mine = {t.match_id: t.team_id for t in all_tips if t.user_id == user.id}
+    by_id = {m.id: m for m in matches}
+    correct = sum(1 for mid, tid in mine.items() if by_id.get(mid) and by_id[mid].winner_team_id == tid)
+    bonus = 1 if correct == len(matches) else 0
+    best = None
+    for mid, tid in mine.items():
+        m = by_id.get(mid)
+        if not m or m.winner_team_id != tid:
+            continue
+        backers = sum(1 for t in all_tips if t.match_id == mid and t.team_id == tid)
+        total = sum(1 for t in all_tips if t.match_id == mid) or 1
+        share = round(100 * backers / total)
+        if best is None or share < best["share"]:
+            best = {"match_id": mid, "team_id": tid, "opponent_id": m.away_team_id if tid == m.home_team_id else m.home_team_id,
+                    "share": share, "backers": backers}
+    rows_now, winners = await compute_standings(upto=number)
+    prev_rounds = [x["number"] async for x in db.rounds.find({"number": {"$lt": number}}, {"number": 1})]
+    rows_prev = (await compute_standings(upto=max(prev_rounds)))[0] if prev_rounds else []
+    rank_now = next((x["rank"] for x in rows_now if x["user_id"] == user.id), None)
+    rank_prev = next((x["rank"] for x in rows_prev if x["user_id"] == user.id), None)
+    round_win = next((w for w in winners if w["number"] == number), None)
+    return {"available": True, "number": r.number, "name": r.name, "correct": correct, "total": len(matches),
+            "bonus": bonus, "points": correct + bonus, "tipped": len(mine), "best_pick": best,
+            "rank": rank_now, "prev_rank": rank_prev if prev_rounds else None, "players": len(rows_now),
+            "won_round": bool(round_win and any(w["user_id"] == user.id for w in round_win["winners"])),
+            "round_top_points": round_win["points"] if round_win else 0}
 
 
 # ---------------- Object storage (team logos) ----------------

@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { api, MatchItem, Team } from "@/src/api";
 import { RoundChips } from "@/src/components/RoundChips";
+import { RoundRecapCard } from "@/src/components/RoundRecapCard";
 import { DivisionFilter } from "@/src/components/DivisionFilter";
 import { TeamLogo } from "@/src/components/TeamLogo";
 import { useToast } from "@/src/components/Toast";
@@ -117,6 +118,7 @@ export default function TipsScreen() {
             contentContainerStyle={styles.list}
             refreshControl={<RefreshControl refreshing={round.isRefetching} onRefresh={refresh} tintColor={colors.brandPrimary} />}
           >
+            {r.complete && <RoundRecapCard round={r.number} teams={teams} />}
             {showReminder && (
               <View testID="tip-reminder-banner" style={styles.reminder}>
                 <Ionicons name="alarm" size={22} color={colors.onBrandPrimary} />

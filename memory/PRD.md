@@ -74,3 +74,11 @@ Build a mobile app: that is a sports tipping competition. Set up for 14 rounds p
 - P1: Push reminders before kick-off (on request only); per-round ladder
 - P1: Margin tiebreaker; per-round leaderboard
 - P2: Private leagues / invite codes; custom uploaded team logos
+
+## Updates (Oct 2026)
+- Teams tab sorted alphabetically
+- Tip reminder banner on Tips tab (untipped matches locking within 48h)
+- Highlight colour changed orange -> bright blue (#2E9BFF)
+- Round Recap card + GET /api/rounds/{n}/recap (score, best/boldest correct pick, ladder movement) — built, NOT yet tested (no completed rounds yet)
+- Web: app centred in 720px column on desktop browsers; hosting guide in /app/DEPLOY_WEB.md (Vercel/Netlify + Emergent backend)
+- Pending: security fixes (Apple sign-in by Apple ID, login rate limiting, admin password) — user deferred

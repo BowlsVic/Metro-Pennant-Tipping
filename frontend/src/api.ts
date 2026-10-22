@@ -34,6 +34,11 @@ export type RoundDetail = RoundSummary & {
 };
 export type LadderRow = { user_id: string; name: string; correct: number; bonus: number; points: number; tips: number; rank: number; round_wins: number };
 export type RoundWinner = { number: number; name: string; points: number; winners: { user_id: string; name: string }[] };
+export type RoundRecap = {
+  available: boolean; number: number; name: string; correct: number; total: number; bonus: number; points: number; tipped: number;
+  best_pick: { match_id: string; team_id: string; opponent_id: string; share: number; backers: number } | null;
+  rank: number | null; prev_rank: number | null; players: number; won_round: boolean; round_top_points: number;
+};
 export type SyncStatus = {
   last_sync?: string; updated?: number; completed_found?: number; finals_added?: number; kickoffs_updated?: number;
   error?: string | null; last_attempt?: string;

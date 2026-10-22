@@ -2,7 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { LogBox, StyleSheet, View } from "react-native";
+import { LogBox, Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
@@ -36,7 +36,9 @@ export default function RootLayout() {
             <AuthProvider>
               <ToastProvider>
                 <StatusBar style="light" />
-                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surface } }} />
+                <View style={[styles.frame, Platform.OS === "web" && [styles.webFrame, { borderColor: colors.border }]]}>
+                  <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surface } }} />
+                </View>
               </ToastProvider>
             </AuthProvider>
           </KeyboardProvider>
@@ -50,4 +52,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  frame: { flex: 1 },
+  // On laptops/desktops keep the app in a centred, readable column.
+  webFrame: { width: "100%", maxWidth: 720, alignSelf: "center", borderLeftWidth: 1, borderRightWidth: 1 },
 });
