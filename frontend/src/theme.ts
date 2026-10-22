@@ -54,14 +54,14 @@ const light = {
   // Brand: the identity color and the fills built from it.
   // Neutral by default; replace with the design guidelines values.
   // ---------------------------------------------------------------------------
-  brand: "#FF6B00",
-  onBrand: "#1A0B00",
-  brandPrimary: "#FF6B00",
-  onBrandPrimary: "#1A0B00",
-  brandSecondary: "#E05A00",
+  brand: "#2E9BFF",
+  onBrand: "#001A33",
+  brandPrimary: "#2E9BFF",
+  onBrandPrimary: "#001A33",
+  brandSecondary: "#1A7FE0",
   onBrandSecondary: "#FFFFFF",
-  brandTertiary: "#3D1C00",
-  onBrandTertiary: "#FFB885",
+  brandTertiary: "#0A2540",
+  onBrandTertiary: "#9DD0FF",
 
   // ---------------------------------------------------------------------------
   // Status: semantic only, never decorative. Fill for badges, banners and
@@ -74,8 +74,8 @@ const light = {
   onWarning: "#452300",
   error: "#F04438",
   onError: "#4A0F09",
-  info: "#FFB885",
-  onInfo: "#1A0B00",
+  info: "#9DD0FF",
+  onInfo: "#001A33",
   successTint: "#0B2A1C",
   errorTint: "#2E1210",
   scrim: "rgba(12,14,18,0.92)",

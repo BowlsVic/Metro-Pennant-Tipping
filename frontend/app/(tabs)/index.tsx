@@ -119,7 +119,7 @@ export default function TipsScreen() {
           >
             {showReminder && (
               <View testID="tip-reminder-banner" style={styles.reminder}>
-                <Ionicons name="alarm" size={22} color={colors.onWarning} />
+                <Ionicons name="alarm" size={22} color={colors.onBrandPrimary} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.reminderTitle}>
                     {untipped.length} {untipped.length === 1 ? "match" : "matches"} still to tip
@@ -243,9 +243,9 @@ const useStyles = makeStyles((c) => ({
   scoreLbl: { color: c.onBrandTertiary, fontFamily: fonts.displaySemi, fontSize: 12 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   list: { padding: spacing.lg, gap: spacing.md },
-  reminder: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: c.warning, borderRadius: radius.lg, padding: spacing.md },
-  reminderTitle: { color: c.onWarning, fontFamily: fonts.display, fontSize: 18 },
-  reminderSub: { color: c.onWarning, fontFamily: fonts.displaySemi, fontSize: 14 },
+  reminder: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: c.brandPrimary, borderRadius: radius.lg, padding: spacing.md },
+  reminderTitle: { color: c.onBrandPrimary, fontFamily: fonts.display, fontSize: 18 },
+  reminderSub: { color: c.onBrandPrimary, fontFamily: fonts.displaySemi, fontSize: 14 },
   roundHead: { marginBottom: spacing.xs, flexDirection: "row", alignItems: "center", gap: spacing.sm },
   groupHead: { color: c.onSurfaceTertiary, fontFamily: fonts.display, fontSize: 14, letterSpacing: 1.2, marginBottom: spacing.sm },
   groupHeadSpaced: { marginTop: spacing.md },
